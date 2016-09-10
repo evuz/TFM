@@ -8,19 +8,15 @@ function botTelegram () {
     var photoCam = require("./photo");
 
     var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
+
     // Setup polling way
     var bot = new TelegramBot(token, {polling: true});
+
     bot.onText(/\/server (.+)/, function (msg, match) {
         var fromId = msg.from.id;
         var port = match[1];
         var s = server.iniciar(port);
         bot.sendMessage(fromId, s);
-    });
-
-    bot.onText(/\/echo (.+)/, function (msg, match) {
-        var fromId = msg.from.id;
-        var resp = match[1];
-        bot.sendMessage(fromId, resp);
     });
 
     bot.onText(/\/photo/, function (msg) {
@@ -29,6 +25,12 @@ function botTelegram () {
         photoCam.takePhoto(fromId, function (filename) {
             bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
         });
+    });
+
+    bot.onText(/\/echo (.+)/, function (msg, match) {
+        var fromId = msg.from.id;
+        var resp = match[1];
+        bot.sendMessage(fromId, resp);
     });
 
     // Matches /love
