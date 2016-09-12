@@ -5,27 +5,59 @@
 function botTelegram () {
     var TelegramBot = require('node-telegram-bot-api');
     var server = require("./server");
-    var photoCam = require("./photo");
+    var pass = require("./password");
+    //var photoCam = require("./photo");
 
     var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
 
     // Setup polling way
     var bot = new TelegramBot(token, {polling: true});
 
+    pass.initUserTime();
+
     bot.onText(/\/server (.+)/, function (msg, match) {
         var fromId = msg.from.id;
-        var port = match[1];
-        var s = server.iniciar(port);
-        bot.sendMessage(fromId, s);
+        if(pass.isUser(fromId)) {
+            var port = match[1];
+            var s = server.iniciar(port);
+            bot.sendMessage(fromId, s);
+        } else {
+            answerPassword(fromId);
+        }
     });
 
-    bot.onText(/\/photo/, function (msg) {
+    bot.onText(/\/passwd (.+)/, function (msg, match) {
         var fromId = msg.from.id;
-        var fs = require("fs");
-        photoCam.takePhoto(fromId, function (filename) {
-            bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
+        var str = match[1];
+        pass.isPasswd(str, function () {
+            pass.addUser(fromId);
+            bot.sendMessage(fromId, "Contraseña correcta, usuario " +
+                fromId + " autorizado");
+        }, function () {
+            bot.sendMessage(fromId, "Contraseña incorrecta");
+        })
+    });
+
+    bot.onText(/\/setpasswd (.+)/, function (msg, match) {
+        var fromId = msg.from.id;
+        var strArray = match[1].split(" ");
+        var currentPass = strArray[0];
+        var newPass = strArray[1];
+        pass.isPasswd(currentPass, function () {
+            pass.setPasswd(newPass);
+            bot.sendMessage(fromId, "Contraseña cambiada");
+        }, function () {
+            bot.sendMessage(fromId, "Contraseña incorrecta");
         });
     });
+
+    /*bot.onText(/\/photo/, function (msg) {
+     var fromId = msg.from.id;
+     var fs = require("fs");
+     photoCam.takePhoto(fromId, function (filename) {
+     bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
+     });
+     });*/
 
     bot.onText(/\/echo (.+)/, function (msg, match) {
         var fromId = msg.from.id;
@@ -46,6 +78,11 @@ function botTelegram () {
         };
         bot.sendMessage(chatId, 'Do you love me?', opts);
     });
+
+    function answerPassword(userID) {
+        bot.sendMessage(userID, "No eres un usuario autorizado" +
+            "\nIntroduce /passwd seguido de la contraseña");
+    }
 }
 
 exports.init = botTelegram;
