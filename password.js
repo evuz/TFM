@@ -32,7 +32,7 @@ function setPasswd(newPass) {
     passwd = newPass;
 }
 
-function initUserTime() {
+function init() {
     setInterval(checkUserTime, 5*60*1000);
 }
 
@@ -50,5 +50,5 @@ exports.isUser = isUser;
 exports.addUser = addUser;
 exports.isPasswd = isPasswd;
 exports.setPasswd = setPasswd;
-exports.initUserTime = initUserTime;
+exports.init = init;
 

@@ -12,7 +12,6 @@ function botTelegram () {
 
     // Setup polling way
     var bot = new TelegramBot(token, {polling: true});
-    pass.initUserTime();
 
     /*
      * Función para el servidor
