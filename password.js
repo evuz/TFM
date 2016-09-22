@@ -13,12 +13,8 @@ function addUser (userID) {
     users.push({id: userID, hour: Date.now()});
 }
 
-function isPasswd(str, callbackTrue, callbackFalse) {
-    if(str === passwd) {
-        callbackTrue();
-        return;
-    }
-    callbackFalse();
+function isPasswd(str) {
+    return str === passwd;
 }
 
 function rmUser(userId) {

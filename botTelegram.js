@@ -33,13 +33,13 @@ function botTelegram () {
     bot.onText(/\/passwd (.+)/, function (msg, match) {
         var fromId = msg.from.id;
         var str = match[1];
-        pass.isPasswd(str, function () {
+        if (pass.isPasswd(str)){
             pass.addUser(fromId);
             bot.sendMessage(fromId, "Contraseña correcta, usuario " +
                 fromId + " autorizado");
-        }, function () {
+        } else {
             bot.sendMessage(fromId, "Contraseña incorrecta");
-        })
+        }
     });
 
     bot.onText(/\/setpasswd (.+)/, function (msg, match) {
