@@ -12,9 +12,11 @@ function botTelegram () {
 
     // Setup polling way
     var bot = new TelegramBot(token, {polling: true});
-
     pass.initUserTime();
 
+    /*
+     * Función para el servidor
+     */
     bot.onText(/\/server (.+)/, function (msg, match) {
         var fromId = msg.from.id;
         if(pass.isUser(fromId)) {
@@ -26,6 +28,9 @@ function botTelegram () {
         }
     });
 
+    /*
+     * Funciones manejo de Password
+     */
     bot.onText(/\/passwd (.+)/, function (msg, match) {
         var fromId = msg.from.id;
         var str = match[1];
@@ -51,14 +56,20 @@ function botTelegram () {
         });
     });
 
-    /*bot.onText(/\/photo/, function (msg) {
-     var fromId = msg.from.id;
-     var fs = require("fs");
-     photoCam.takePhoto(fromId, function (filename) {
-     bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
-     });
-     });*/
+    /*
+     * Función para hacer foto desde webcam
+     */
+    // bot.onText(/\/photo/, function (msg) {
+    //     var fromId = msg.from.id;
+    //     var fs = require("fs");
+    //     photoCam.takePhoto(fromId, function (filename) {
+    //         bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
+    //     });
+    // });
 
+    /*
+     * Funciones de prueba/ejemplo
+     */
     bot.onText(/\/echo (.+)/, function (msg, match) {
         var fromId = msg.from.id;
         var resp = match[1];
