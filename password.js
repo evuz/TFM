@@ -1,26 +1,25 @@
-var users = [];
-var passwd = "1234";
+var config = require("./config");
 
 function isUser(userID) {
-    for(var i = 0; i < users.length; i++) {
-        if (users[i].id == userID)
+    for(var i = 0; i < config.users.length; i++) {
+        if (config.users[i].id == userID)
             return true;
     }
     return false;
 }
 
 function addUser (userID) {
-    users.push({id: userID, hour: Date.now()});
+    config.users.push({id: userID, hour: Date.now()});
 }
 
 function isPasswd(str) {
-    return str === passwd;
+    return str === config.passwd;
 }
 
 function rmUser(userId) {
-    for(var i = 0; i < users.length; i++) {
-        if (users[i].id == userID)
-            users.splice(i,1);
+    for(var i = 0; i < config.users.length; i++) {
+        if (config.users[i].id == userID)
+            config.users.splice(i,1);
     }
 }
 
