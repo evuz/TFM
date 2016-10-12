@@ -6,10 +6,11 @@ var server = require("./server");
 var pass = require("./password");
 //var photoCam = require("./photo");
 var actionBot = {
-    config: "/config",
-    passwd: "/passwd",
-    server:"/server",
-    photo:"/photo"
+    isAction: "/",
+    config: "config",
+    passwd: "passwd",
+    server:"server",
+    photo:"photo"
 };
 var currentState = {};
 var bot;
@@ -25,45 +26,58 @@ var botTelegram = {
         bot.on('text', function (msg) {
             var fromId = msg.from.id;
             var strArray = msg.text.split(" ");
-            var action = strArray[0];
-            if (action == actionBot.passwd) {
-                var passwd = strArray[1];
-                if (pass.isPasswd(passwd)) {
-                    pass.addUser(fromId);
-                    bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-                        fromId + " autorizado");
+            var isAction = strArray[0].substring(0,1);
+            if(isAction == actionBot.isAction) {
+                var action = strArray[0].split(actionBot.isAction)[1];
+                if(action == actionBot[action]) {
+                    bot.sendMessage(fromId, action + " es una acción válida");
                 } else {
-                    bot.sendMessage(fromId, "Contraseña incorrecta");
+                    bot.sendMessage(fromId, action + " no es una acción válida." +
+                        "\nIntroduzca /help para ver las acciones válidas.");
                 }
-            } else if (action == actionBot.config){
-                bot.sendMessage(fromId, "Introduce la contraseña");
-                currentState[fromId] = {action: actionBot.config, state: "pass"};
-            } else if (pass.isUser(fromId)) {
-                if (action == actionBot.server) {
-                    var port = strArray[1];
-                    if (port) {
-                        var s = server.iniciar(port);
-                        bot.sendMessage(fromId, s);
-                    } else {
-                        bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
-                            "/server <port>");
-                    }
-                }
-            } else if (currentState[fromId]) {
-                if (currentState[fromId].action == actionBot.config) {
-                    var passwd = action;
-                    if (pass.isPasswd(passwd)) {
-                        bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-                            fromId + " autorizado");
-                    } else {
-                        bot.sendMessage(fromId, "Contraseña incorrecta");
-                    }
-                }
-                currentState[fromId].action = "";
             } else {
-                bot.sendMessage(fromId, "No eres un usuario autorizado" +
-                    "\nIntroduce /passwd seguido de la contraseña");
+                bot.sendMessage(fromId, "No has ejecutado una acción");
             }
+            // var action = strArray[0];
+            // if (action == actionBot.passwd) {
+            //     var passwd = strArray[1];
+            //     if (pass.isPasswd(passwd)) {
+            //         pass.addUser(fromId);
+            //         bot.sendMessage(fromId, "Contraseña correcta, usuario " +
+            //             fromId + " autorizado");
+            //     } else {
+            //         bot.sendMessage(fromId, "Contraseña incorrecta");
+            //     }
+            // } else if (action == actionBot.config){
+            //     bot.sendMessage(fromId, "Introduce la contraseña");
+            //     currentState[fromId] = {action: actionBot.config, state: "pass"};
+            // } else if (actionBot[action]) {
+            //     console.log(actionBot[action]);
+            //     if (action == actionBot.server) {
+            //         var port = strArray[1];
+            //         if (port) {
+            //             var s = server.iniciar(port);
+            //             bot.sendMessage(fromId, s);
+            //         } else {
+            //             bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
+            //                 "/server <port>");
+            //         }
+            //     }
+            // } else if (currentState[fromId] && currentState[fromId].action) {
+            //     if (currentState[fromId].action == actionBot.config) {
+            //         var passwd = action;
+            //         if (pass.isPasswd(passwd)) {
+            //             bot.sendMessage(fromId, "Contraseña correcta, usuario " +
+            //                 fromId + " autorizado");
+            //         } else {
+            //             bot.sendMessage(fromId, "Contraseña incorrecta");
+            //         }
+            //     }
+            //     currentState[fromId].action = "";
+            // } else {
+            //     bot.sendMessage(fromId, "No eres un usuario autorizado" +
+            //         "\nIntroduce /passwd seguido de la contraseña");
+            // }
         });
 
         // /**
