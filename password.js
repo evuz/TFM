@@ -18,13 +18,21 @@ function isPasswd(str) {
 
 function rmUser(userId) {
     for(var i = 0; i < config.usersReg.length; i++) {
-        if (config.usersReg[i].id == userID)
+        if (config.usersReg[i].id == userId)
             config.usersReg.splice(i,1);
     }
 }
 
 function setPasswd(newPass) {
     config.passwd = newPass;
+}
+
+function setAdminPasswd(newPass) {
+    config.adminPass = newPass;
+}
+
+function setAdminId(adminId) {
+    config.adminId = adminId;
 }
 
 function init() {
@@ -34,7 +42,7 @@ function init() {
 function checkUserTime() {
     for(var i = 0; i < config.usersReg.length; i++) {
         var oneHour = 60*60*1000;
-        var time = Date.now() - users[i].hour;
+        var time = Date.now() - config.users[i].hour;
         if (oneHour < time) {
             config.usersReg.splice(i,1);
         }
@@ -45,5 +53,7 @@ exports.isUser = isUser;
 exports.addUser = addUser;
 exports.isPasswd = isPasswd;
 exports.setPasswd = setPasswd;
+exports.setAdminPasswd = setAdminPasswd;
+exports.setAdminId = setAdminId
 exports.init = init;
 

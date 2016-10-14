@@ -30,11 +30,13 @@ var botTelegram = {
                 if (action == config.actionBot[action]) {
                     if (action == config.actionBot.start) {
                         if (config.initConfig) {
-
+                            bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
+                            "para comenzar introduzca la contraseña");
+                            config.currentState[fromId] = {action: config.actionBot.start, state: 3};
                         } else {
                             bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                                 "usted va a ser el usuario administrador.\n" +
-                                "Por favor, introduzca la contraseña.");
+                                "Por favor, introduzca la contraseña de administrador.");
                             config.currentState[fromId] = {action: config.actionBot.start, state: 1};
                         }
                     } else if (action == config.actionBot.passwd) {
@@ -76,29 +78,45 @@ var botTelegram = {
                     switch (config.currentState[fromId].state) {
                         case 1:
                             var password = strArray[0];
+                            pass.setAdminPasswd(password);
+                            pass.setAdminId(fromId);
+                            bot.sendMessage(fromId, "Contraseña de administrador establecida." +
+                            "\n Usted ahora es el administrador de la central domótica." +
+                            "\n Estas son las acciones especiales que sólo usted puede realizar." +
+                            "\n /setPasswd < newPassword > -> Cambia la contraseña del sistema" +
+                            "\n /newUser < userId > -> Añade un usuario" +
+                            "\n /rmUser < userId > -> Elimina a un usuario" +
+                            "\n /showUser -> Muestra a todos los usuarios" +
+                            "\n\nAhora introduzca la contraseña de usuario");
+                            config.initConfig = true;
+                            config.currentState[fromId].state = 2;
+                            break;
+                        case 2:
+                            var password = strArray[0];
+                            pass.setPasswd(password);
+                            bot.sendMessage(fromId, "Contraseña establecida." +
+                            "\n\nIntroduza su nombre");
+                            config.currentState[fromId].state = 4;
+                            break;
+                        case 3:
+                            var password = strArray[0];
                             if(pass.isPasswd(password)) {
                                 bot.sendMessage(fromId, "Contraseña correcta." +
-                                    "\n Usted ahora es el administrador de la central domótica." +
-                                    "\n Estas son las acciones especiales que sólo usted puede realizar." +
-                                    "\n /setPasswd < newPassword > -> Cambia la contraseña del sistema" +
-                                    "\n /newUser < userId > -> Añade un usuario" +
-                                    "\n /rmUser < userId > -> Elimina a un usuario" +
-                                    "\n /showUser -> Muestra a todos los usuarios");
-                                bot.sendMessage(fromId, "Introduza su nombre");
-                                config.currentState[fromId].state = 2;
+                                "\n\nIntroduza su nombre");
+                                config.currentState[fromId].state = 4;
                             } else {
                                 bot.sendMessage(fromId, "Contraseña incorrecta");
                                 config.currentState[fromId].action = null;
                             }
                             break;
-                        case 2:
+                        case 4:
                             var name = msg.text;
                             config.users[fromId] = {name: name};
                             bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica introduce tu IP" +
                                 "\n Si no estás en tu red, introduce 'fin'");
-                            config.currentState[fromId].state = 3;
+                            config.currentState[fromId].state = 5;
                             break;
-                        case 3:
+                        case 5:
                             var ip = strArray[0];
                             if(ip == "no") {
                                 bot.sendMessage("Hemos terminado la configuración de su usuario" +
@@ -109,7 +127,7 @@ var botTelegram = {
                             } else {
                                 config.users[fromId].ip = ip;
                                 bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
-                                    "\n Para conocer todas las funciones de su central domótica introduzca el comando" +
+                                    "\nPara conocer todas las funciones de su central domótica introduzca el comando " +
                                     "/help");
                             }
                     }
