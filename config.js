@@ -4,7 +4,9 @@
 var config = {
     initConfig: false,
     passwd: "1234",
+    adminPass: ",.,ñpqei",
     users: {},
+    usersReg: [],
     usersAtHome: {},
     nUsersAtHome: {},
     adminId: 0,
