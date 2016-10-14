@@ -4,8 +4,19 @@
 var config = {
     initConfig: false,
     passwd: "1234",
-    users: [],
-    adminId: 0
+    users: {},
+    usersAtHome: {},
+    nUsersAtHome: {},
+    adminId: 0,
+    actionBot: {
+        isAction: "/",
+        start: "start",
+        config: "config",
+        passwd: "passwd",
+        server:"server",
+        photo:"photo"
+    },
+    currentState: {}
 };
 
 module.exports = config;

@@ -3,11 +3,10 @@
  */
 var arp = require("./macDiscover");
 var botTelegram = require("./botTelegram");
+var config = require("./config");
 
 var mainUserId = 952738;
 var usersByMAC = {};
-var userAtHome = {};
-var nUserAtHome = 0;
 var advise = false;
 var alarmActive = true;
 
@@ -15,15 +14,15 @@ function initAlarm(T) {
     usersByMAC["64:cc:2e:d9:bf:27"] = {name:"JGB"};
     setInterval(function () {
         arp.getAllMAC("192.168.1.", function (mac) {
-            nUserAtHome = 0;
+            config.nUsersAtHome = 0;
             mac.forEach(function (mac) {
                 if (usersByMAC[mac] != undefined) {
-                    userAtHome[mac] = usersByMAC[mac];
+                    config.usersAtHome[mac] = usersByMAC[mac];
                     advise = true;
-                    nUserAtHome++;
+                    config.nUsersAtHome++;
                 }
             });
-            if(nUserAtHome == 0 && alarmActive && advise) {
+            if(config.nUsersAtHome == 0 && alarmActive && advise) {
                 botTelegram.talk(mainUserId, "No hay nadie en casa\n " +
                     "Si quieres activar la alarma usa el comando /activarAlarma");
                 advise = false;
