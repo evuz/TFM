@@ -1,0 +1,9 @@
+* Estructura
+app.js -> Es el fichero que inicia el sistema, aquí pondremos las funciones de inicialización
+botTelegram.js -> Aquí tenemos toda la lógica del bot, máquina de estados, funciones de interacción con el usuario...
+config.js -> Estructuras y variables de configuración, estarán todas en este fichero para organizarlo mejor.
+alarm.js -> Gestión de acciones de la alarma.
+macDiscover -> Script que devuelve las direcciones MAC que hay en la red
+password.js -> Gestión de los usuarios del sistema y quien puede controlarlo
+photo.js -> Script que tomará foto si conectamos una webcam
+server.js -> Script que utilizo para hacer pruebas, sólo crea un pequeño servidor.
