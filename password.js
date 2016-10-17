@@ -42,7 +42,7 @@ function init() {
 function checkUserTime() {
     for(var i = 0; i < config.usersReg.length; i++) {
         var oneHour = 60*60*1000;
-        var time = Date.now() - config.users[i].hour;
+        var time = Date.now() - config.usersReg[i].hour;
         if (oneHour < time) {
             config.usersReg.splice(i,1);
         }

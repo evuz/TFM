@@ -22,126 +22,152 @@ var botTelegram = {
             var strArray = msg.text.split(" ");
             var isAction = strArray[0].substring(0, 1);
 
-            /* Diferencia si es una acción o no lo es, esto servirá luego
-             cuando queramos interacción con el usuario */
-            if (isAction == config.actionBot.isAction) {
-                var action = strArray[0].split(config.actionBot.isAction)[1];
-                /* Mira si es una acción conocida */
-                if (fromId == config.adminId &&
-                    action == config.actionAdmin[action]) {
-                    switch (action) {
-                        case config.actionAdmin.addUser:
-                            break;
-                        default:
-                            break;
-                    }
-                } else if (action == config.actionBot[action]) {
-                    if (action == config.actionBot.start) {
-                        if (config.initConfig) {
-                            bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
-                            "para comenzar introduzca la contraseña");
-                            config.currentState[fromId] = {action: config.actionBot.start, state: 3};
-                        } else {
-                            bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
-                                "usted va a ser el usuario administrador.\n" +
-                                "Por favor, introduzca la contraseña de administrador.");
-                            config.currentState[fromId] = {action: config.actionBot.start, state: 1};
-                        }
-                    } else if (action == config.actionBot.passwd) {
-                        var passwd = strArray[1];
-                        if (pass.isPasswd(passwd)) {
-                            pass.addUser(fromId);
-                            bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-                                fromId + " autorizado");
-                        } else {
-                            bot.sendMessage(fromId, "Contraseña incorrecta");
-                        }
-                    } else if (pass.isUser(fromId)) {
+            if (!config.initConfig || config.users[fromId]) {
+                /* Diferencia si es una acción o no lo es, esto servirá luego
+                 cuando queramos interacción con el usuario */
+                if (isAction == config.actionBot.isAction) {
+                    var action = strArray[0].split(config.actionBot.isAction)[1];
+                    /* Mira si es una acción conocida */
+                    if (fromId == config.adminId &&
+                        action == config.actionAdmin[action]) {
                         switch (action) {
-                            case config.actionBot.server:
-                                var port = strArray[1];
-                                if (port) {
-                                    var s = server.iniciar(port);
-                                    bot.sendMessage(fromId, s);
+                            case config.actionAdmin.addUser:
+                                bot.sendMessage(fromId, "Introduce el id del usuario");
+                                config.currentState[fromId] = {
+                                    action: config.actionAdmin.addUser,
+                                    state: 1
+                                };
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (action == config.actionBot[action]) {
+                        if (action == config.actionBot.start) {
+                            if (config.initConfig) {
+                                bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
+                                    "para comenzar introduzca la contraseña");
+                                config.currentState[fromId] = {action: config.actionBot.start, state: 3};
+                            } else {
+                                bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
+                                    "usted va a ser el usuario administrador.\n" +
+                                    "Por favor, introduzca la contraseña de administrador.");
+                                config.currentState[fromId] = {action: config.actionBot.start, state: 1};
+                            }
+                        } else if (action == config.actionBot.passwd) {
+                            var passwd = strArray[1];
+                            if (pass.isPasswd(passwd)) {
+                                pass.addUser(fromId);
+                                bot.sendMessage(fromId, "Contraseña correcta, usuario " +
+                                    fromId + " autorizado");
+                            } else {
+                                bot.sendMessage(fromId, "Contraseña incorrecta");
+                            }
+                        } else if (pass.isUser(fromId)) {
+                            switch (action) {
+                                case config.actionBot.server:
+                                    var port = strArray[1];
+                                    if (port) {
+                                        var s = server.iniciar(port);
+                                        bot.sendMessage(fromId, s);
+                                    } else {
+                                        bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
+                                            "/server <port>");
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            bot.sendMessage(fromId, "No eres un usuario autorizado" +
+                                "\nIntroduce /passwd seguido de la contraseña");
+                        }
+                    } else {
+                        bot.sendMessage(fromId, action + " no es una acción válida." +
+                            "\nIntroduzca /help para ver las acciones válidas.");
+                    }
+                } else {
+                    if (config.currentState[fromId].action == config.actionBot.start) {
+                        // TODO: no está bien planteado, la primera debería pedir la contraseña de admin
+                        // la segunda pedir la contraseña de usuarios. A partir de ahí ya seria configuración normal.
+                        switch (config.currentState[fromId].state) {
+                            case 1:
+                                var password = strArray[0];
+                                pass.setAdminPasswd(password);
+                                pass.setAdminId(fromId);
+                                bot.sendMessage(fromId, "Contraseña de administrador establecida." +
+                                    "\n Usted ahora es el administrador de la central domótica." +
+                                    "\n Estas son las acciones especiales que sólo usted puede realizar." +
+                                    "\n /setPasswd < newPassword > -> Cambia la contraseña del sistema" +
+                                    "\n /newUser < userId > -> Añade un usuario" +
+                                    "\n /rmUser < userId > -> Elimina a un usuario" +
+                                    "\n /showUser -> Muestra a todos los usuarios" +
+                                    "\n\nAhora introduzca la contraseña de usuario");
+                                config.currentState[fromId].state = 2;
+                                break;
+                            case 2:
+                                var password = strArray[0];
+                                pass.setPasswd(password);
+                                bot.sendMessage(fromId, "Contraseña establecida." +
+                                    "\n\nIntroduza su nombre");
+                                config.currentState[fromId].state = 4;
+                                pass.addUser(fromId);
+                                break;
+                            case 3:
+                                var password = strArray[0];
+                                if (pass.isPasswd(password)) {
+                                    bot.sendMessage(fromId, "Contraseña correcta." +
+                                        "\n\nIntroduza su nombre");
+                                    config.currentState[fromId].state = 4;
+                                    pass.addUser(fromId);
                                 } else {
-                                    bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
-                                        "/server <port>");
+                                    bot.sendMessage(fromId, "Contraseña incorrecta");
+                                    config.currentState[fromId].action = null;
                                 }
+                                break;
+                            case 4:
+                                var name = msg.text;
+                                config.users[fromId] = {name: name};
+                                bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica introduce tu IP" +
+                                    "\n Si no estás en tu red, introduce 'fin'");
+                                config.currentState[fromId].state = 5;
+                                break;
+                            case 5:
+                                var ip = strArray[0];
+                                if (ip == "no") {
+                                    bot.sendMessage("Hemos terminado la configuración de su usuario" +
+                                        "\n recuerde introducir su IP cuando esté en casa con el comando" +
+                                        "/myIP < suIP >." +
+                                        "\n Para conocer todas las funciones de su central domótica introduzca el comando" +
+                                        "/help");
+                                } else {
+                                    config.users[fromId].ip = ip;
+                                    bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
+                                        "\nPara conocer todas las funciones de su central domótica introduzca el comando " +
+                                        "/help");
+                                }
+                                if (!config.initConfig)
+                                    config.initConfig = true;
+                        }
+                    } else if (config.currentState[fromId].action == config.actionAdmin.addUser) {
+                        switch (config.currentState[fromId].state) {
+                            case 1:
+                                var userId = strArray[0];
+                                config.users[userId] = {name: null, ip: null};
+                                bot.sendMessage(fromId, "Has añadido al usuario con ID " + userId);
                                 break;
                             default:
                                 break;
                         }
                     } else {
-                        bot.sendMessage(fromId, "No eres un usuario autorizado" +
-                            "\nIntroduce /passwd seguido de la contraseña");
+                        bot.sendMessage(fromId, "No has ejecutado una acción");
                     }
-                } else {
-                    bot.sendMessage(fromId, action + " no es una acción válida." +
-                        "\nIntroduzca /help para ver las acciones válidas.");
                 }
+            } else if (msg.text == "/prueba") {
+                // Para poder hacer pruebas sin configurar
             } else {
-                if (config.currentState[fromId].action == config.actionBot.start) {
-                    // TODO: no está bien planteado, la primera debería pedir la contraseña de admin
-                    // la segunda pedir la contraseña de usuarios. A partir de ahí ya seria configuración normal.
-                    switch (config.currentState[fromId].state) {
-                        case 1:
-                            var password = strArray[0];
-                            pass.setAdminPasswd(password);
-                            pass.setAdminId(fromId);
-                            bot.sendMessage(fromId, "Contraseña de administrador establecida." +
-                            "\n Usted ahora es el administrador de la central domótica." +
-                            "\n Estas son las acciones especiales que sólo usted puede realizar." +
-                            "\n /setPasswd < newPassword > -> Cambia la contraseña del sistema" +
-                            "\n /newUser < userId > -> Añade un usuario" +
-                            "\n /rmUser < userId > -> Elimina a un usuario" +
-                            "\n /showUser -> Muestra a todos los usuarios" +
-                            "\n\nAhora introduzca la contraseña de usuario");
-                            config.initConfig = true;
-                            config.currentState[fromId].state = 2;
-                            break;
-                        case 2:
-                            var password = strArray[0];
-                            pass.setPasswd(password);
-                            bot.sendMessage(fromId, "Contraseña establecida." +
-                            "\n\nIntroduza su nombre");
-                            config.currentState[fromId].state = 4;
-                            break;
-                        case 3:
-                            var password = strArray[0];
-                            if(pass.isPasswd(password)) {
-                                bot.sendMessage(fromId, "Contraseña correcta." +
-                                "\n\nIntroduza su nombre");
-                                config.currentState[fromId].state = 4;
-                            } else {
-                                bot.sendMessage(fromId, "Contraseña incorrecta");
-                                config.currentState[fromId].action = null;
-                            }
-                            break;
-                        case 4:
-                            var name = msg.text;
-                            config.users[fromId] = {name: name};
-                            bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica introduce tu IP" +
-                                "\n Si no estás en tu red, introduce 'fin'");
-                            config.currentState[fromId].state = 5;
-                            break;
-                        case 5:
-                            var ip = strArray[0];
-                            if(ip == "no") {
-                                bot.sendMessage("Hemos terminado la configuración de su usuario" +
-                                    "\n recuerde introducir su IP cuando esté en casa con el comando" +
-                                    "/myIP < suIP >." +
-                                    "\n Para conocer todas las funciones de su central domótica introduzca el comando" +
-                                    "/help");
-                            } else {
-                                config.users[fromId].ip = ip;
-                                bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
-                                    "\nPara conocer todas las funciones de su central domótica introduzca el comando " +
-                                    "/help");
-                            }
-                    }
-                } else {
-                    bot.sendMessage(fromId, "No has ejecutado una acción");
-                }
+                bot.sendMessage(fromId, "Usted no es un usuario autorizado, " +
+                    "contacte con el administrador." +
+                    "\n Su id es " + fromId);
             }
         });
     },
