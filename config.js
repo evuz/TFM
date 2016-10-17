@@ -10,6 +10,9 @@ var config = {
     usersAtHome: {},
     nUsersAtHome: {},
     adminId: 0,
+    actionAdmin: {
+        addUser: "addUser"
+    },
     actionBot: {
         isAction: "/",
         start: "start",

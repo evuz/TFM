@@ -27,7 +27,15 @@ var botTelegram = {
             if (isAction == config.actionBot.isAction) {
                 var action = strArray[0].split(config.actionBot.isAction)[1];
                 /* Mira si es una acción conocida */
-                if (action == config.actionBot[action]) {
+                if (fromId == config.adminId &&
+                    action == config.actionAdmin[action]) {
+                    switch (action) {
+                        case config.actionAdmin.addUser:
+                            break;
+                        default:
+                            break;
+                    }
+                } else if (action == config.actionBot[action]) {
                     if (action == config.actionBot.start) {
                         if (config.initConfig) {
                             bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
