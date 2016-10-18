@@ -45,8 +45,8 @@ var botTelegram = {
                         if (action == config.actionBot.start) {
                             if (config.initConfig) {
                                 bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
-                                    "para comenzar introduzca la contraseña");
-                                config.currentState[fromId] = {action: config.actionBot.start, state: 3};
+                                    "para comenzar introduzca su nombre");
+                                config.currentState[fromId] = {action: config.actionBot.start, state: 4};
                             } else {
                                 bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                                     "usted va a ser el usuario administrador.\n" +
@@ -54,14 +54,19 @@ var botTelegram = {
                                 config.currentState[fromId] = {action: config.actionBot.start, state: 1};
                             }
                         } else if (action == config.actionBot.passwd) {
-                            var passwd = strArray[1];
-                            if (pass.isPasswd(passwd)) {
-                                pass.addUser(fromId);
-                                bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-                                    fromId + " autorizado");
-                            } else {
-                                bot.sendMessage(fromId, "Contraseña incorrecta");
-                            }
+                            // var passwd = strArray[1];
+                            // if (pass.isPasswd(passwd)) {
+                            //     pass.addUser(fromId);
+                            //     bot.sendMessage(fromId, "Contraseña correcta, usuario " +
+                            //         fromId + " autorizado");
+                            // } else {
+                            //     bot.sendMessage(fromId, "Contraseña incorrecta");
+                            // }
+                            config.currentState[fromId] = {kb: pass.getKeyboard(false, function (kb) {
+                                bot.sendMessage(fromId, "Introduzca la contraseña", kb);
+                            })};
+                            config.currentState[fromId].action = config.actionBot.passwd;
+                            config.currentState[fromId].state = "";
                         } else if (pass.isUser(fromId)) {
                             switch (action) {
                                 case config.actionBot.server:
@@ -145,6 +150,8 @@ var botTelegram = {
                                         "\nPara conocer todas las funciones de su central domótica introduzca el comando " +
                                         "/help");
                                 }
+                                config.currentState[fromId].action = null;
+                                config.currentState[fromId].state = null;
                                 if (!config.initConfig)
                                     config.initConfig = true;
                         }
@@ -158,12 +165,27 @@ var botTelegram = {
                             default:
                                 break;
                         }
+                    } else if (config.currentState[fromId].action == config.actionBot.passwd) {
+                        if (config.currentState[fromId].state.length == 3) {
+                            config.currentState[fromId].state += msg.text;
+                            if (pass.isPasswd(config.currentState[fromId].state,
+                                    config.currentState[fromId].kb)) {
+                                bot.sendMessage(fromId, "Contraseña correcta")
+                                pass.addUser(fromId);
+                            } else {
+                                bot.sendMessage(fromId, "Contraseña incorrecta")
+                            }
+                        } else {
+                            config.currentState[fromId].state += msg.text;
+                        }
                     } else {
                         bot.sendMessage(fromId, "No has ejecutado una acción");
                     }
                 }
-            } else if (msg.text == "/prueba") {
-                // Para poder hacer pruebas sin configurar
+            } else if (msg.text == "prueba") {
+                pass.getKeyboard(false, function (kb) {
+                    bot.sendMessage(fromId, "Prueba", kb)
+                })
             } else {
                 bot.sendMessage(fromId, "Usted no es un usuario autorizado, " +
                     "contacte con el administrador." +

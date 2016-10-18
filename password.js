@@ -13,8 +13,22 @@ function addUser (userID) {
     config.usersReg.push({id: userID, hour: Date.now()});
 }
 
-function isPasswd(str) {
-    return str === config.passwd;
+function isPasswd(str, kb) {
+    var newPass = "";
+    var p = true;
+    if (kb == undefined) {
+        newPass = config.passwd;
+        p = false;
+    }
+
+    if (p) {
+        for (var i = 0; i < config.passwd.length; i++) {
+            var l = config.passwd.substring(i, i + 1);
+            newPass += kb[l];
+        }
+    }
+
+    return str === newPass;
 }
 
 function rmUser(userId) {
@@ -50,9 +64,9 @@ function checkUserTime() {
     }
 }
 
-function getKeyboard(oneTime) {
+function getKeyboard(oneTime, callback) {
     var keysB = [];
-    var keyboard = [];
+    var keysRamdon = [];
 
     for (var i = 0; i < keys.length; i++) {
         keysB[i] = keys[i];
@@ -61,67 +75,67 @@ function getKeyboard(oneTime) {
     nKeys = keysB.length;
     for (var i = 0; i < nKeys; i++) {
         var ramdon = Math.floor(Math.random()*keysB.length);
-        keyboard[i] = keysB[ramdon];
+        keysRamdon[i] = keysB[ramdon];
         keysB.splice(ramdon, 1);
     }
 
-    var keyboard = {
+    var kb = {
         reply_markup: JSON.stringify({
             one_time_keyboard: oneTime,
             keyboard: [
                 [
                     {
-                        text: keyboard[1],
+                        text: keysRamdon[1],
                         callback_data: '1'
                     },
                     {
-                        text: keyboard[2],
+                        text: keysRamdon[2],
                         callback_data: '2'
                     },
                     {
-                        text: keyboard[3],
+                        text: keysRamdon[3],
                         callback_data: '3'
                     }
                 ],
                 [
                     {
-                        text: keyboard[4],
+                        text: keysRamdon[4],
                         callback_data: '4'
                     },
                     {
-                        text: keyboard[5],
+                        text: keysRamdon[5],
                         callback_data: '5'
                     },
                     {
-                        text: keyboard[6],
+                        text: keysRamdon[6],
                         callback_data: '6'
                     }
                 ],
                 [
                     {
-                        text: keyboard[7],
+                        text: keysRamdon[7],
                         callback_data: '7'
                     },
                     {
-                        text: keyboard[8],
+                        text: keysRamdon[8],
                         callback_data: '2'
                     },
                     {
-                        text: keyboard[9],
+                        text: keysRamdon[9],
                         callback_data: '9'
                     }
                 ],
                 [
                     {
-                        text: keyboard[0],
+                        text: keysRamdon[0],
                         callback_data: '0'
                     }
                 ]
             ]
         })
     };
-
-    return keyboard;
+    callback(kb);
+    return keysRamdon;
 }
 
 exports.isUser = isUser;
