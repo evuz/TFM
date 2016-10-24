@@ -54,14 +54,6 @@ var botTelegram = {
                                 config.currentState[fromId] = {action: config.actionBot.start, state: 1};
                             }
                         } else if (action == config.actionBot.passwd) {
-                            // var passwd = strArray[1];
-                            // if (pass.isPasswd(passwd)) {
-                            //     pass.addUser(fromId);
-                            //     bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-                            //         fromId + " autorizado");
-                            // } else {
-                            //     bot.sendMessage(fromId, "Contraseña incorrecta");
-                            // }
                             config.currentState[fromId] = {kb: pass.getKeyboard(false, function (kb) {
                                 bot.sendMessage(fromId, "Introduzca la contraseña", kb);
                             })};
@@ -110,7 +102,7 @@ var botTelegram = {
                                 config.currentState[fromId].state = 2;
                                 break;
                             case 2:
-                                var password = strArray[0];
+                                password = strArray[0];
                                 pass.setPasswd(password);
                                 bot.sendMessage(fromId, "Contraseña establecida." +
                                     "\n\nIntroduza su nombre");
@@ -118,7 +110,7 @@ var botTelegram = {
                                 pass.addUser(fromId);
                                 break;
                             case 3:
-                                var password = strArray[0];
+                                password = strArray[0];
                                 if (pass.isPasswd(password)) {
                                     bot.sendMessage(fromId, "Contraseña correcta." +
                                         "\n\nIntroduza su nombre");
@@ -132,7 +124,8 @@ var botTelegram = {
                             case 4:
                                 var name = msg.text;
                                 config.users[fromId] = {name: name};
-                                bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica introduce tu IP" +
+                                bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
+                                    "introduce tu MAC" +
                                     "\n Si no estás en tu red, introduce 'fin'");
                                 config.currentState[fromId].state = 5;
                                 break;
@@ -141,14 +134,14 @@ var botTelegram = {
                                 if (ip == "no") {
                                     bot.sendMessage("Hemos terminado la configuración de su usuario" +
                                         "\n recuerde introducir su IP cuando esté en casa con el comando" +
-                                        "/myIP < suIP >." +
-                                        "\n Para conocer todas las funciones de su central domótica introduzca el comando" +
-                                        "/help");
+                                        "/myMAC < suMAC >." +
+                                        "\n Para conocer todas las funciones de su central domótica introduzca " +
+                                        "el comando /help");
                                 } else {
                                     config.users[fromId].ip = ip;
                                     bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
-                                        "\nPara conocer todas las funciones de su central domótica introduzca el comando " +
-                                        "/help");
+                                        "\nPara conocer todas las funciones de su central domótica " +
+                                        "introduzca el comando /help");
                                 }
                                 config.currentState[fromId].action = null;
                                 config.currentState[fromId].state = null;
@@ -170,10 +163,15 @@ var botTelegram = {
                             config.currentState[fromId].state += msg.text;
                             if (pass.isPasswd(config.currentState[fromId].state,
                                     config.currentState[fromId].kb)) {
-                                bot.sendMessage(fromId, "Contraseña correcta")
+                                pass.getKeyboard(true, function (kb) {
+                                    bot.sendMessage(fromId, "Contraseña correcta, usuario " + fromId
+                                        + " añadido", kb)
+                                });
                                 pass.addUser(fromId);
                             } else {
-                                bot.sendMessage(fromId, "Contraseña incorrecta")
+                                pass.getKeyboard(true, function (kb) {
+                                    bot.sendMessage(fromId, "Contraseña incorrecta")
+                                });
                             }
                         } else {
                             config.currentState[fromId].state += msg.text;
@@ -196,128 +194,5 @@ var botTelegram = {
     talk: function (chatId, msg) {
         bot.sendMessage(chatId, msg);
     }
-    //         var action = strArray[0];
-    //         if (action == actionBot.passwd) {
-    //             var passwd = strArray[1];
-    //             if (pass.isPasswd(passwd)) {
-    //                 pass.addUser(fromId);
-    //                 bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-    //                     fromId + " autorizado");
-    //             } else {
-    //                 bot.sendMessage(fromId, "Contraseña incorrecta");
-    //             }
-    //         } else if (action == actionBot.config){
-    //             bot.sendMessage(fromId, "Introduce la contraseña");
-    //             currentState[fromId] = {action: actionBot.config, state: "pass"};
-    //         } else if (actionBot[action]) {
-    //             console.log(actionBot[action]);
-    //             if (action == actionBot.server) {
-    //                 var port = strArray[1];
-    //                 if (port) {
-    //                     var s = server.iniciar(port);
-    //                     bot.sendMessage(fromId, s);
-    //                 } else {
-    //                     bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
-    //                         "/server <port>");
-    //                 }
-    //             }
-    //         } else if (currentState[fromId] && currentState[fromId].action) {
-    //             if (currentState[fromId].action == actionBot.config) {
-    //                 var passwd = action;
-    //                 if (pass.isPasswd(passwd)) {
-    //                     bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-    //                         fromId + " autorizado");
-    //                 } else {
-    //                     bot.sendMessage(fromId, "Contraseña incorrecta");
-    //                 }
-    //             }
-    //             currentState[fromId].action = "";
-    //         } else {
-    //             bot.sendMessage(fromId, "No eres un usuario autorizado" +
-    //                 "\nIntroduce /passwd seguido de la contraseña");
-    //         }
-    //     });
-    //
-    //     /**
-    //      * Función para el servidor
-    //      */
-    //     bot.onText(/\/server (.+)/, function (msg, match) {
-    //         var fromId = msg.from.id;
-    //         if (pass.isUser(fromId)) {
-    //             var port = match[1];
-    //             var s = server.iniciar(port);
-    //             bot.sendMessage(fromId, s);
-    //         } else {
-    //             answerPassword(fromId);
-    //         }
-    //     });
-    //
-    //     /**
-    //      * Funciones manejo de Password
-    //      */
-    //     bot.onText(/\/passwd (.+)/, function (msg, match) {
-    //         var fromId = msg.from.id;
-    //         var str = match[1];
-    //         if (pass.isPasswd(str)) {
-    //             pass.addUser(fromId);
-    //             bot.sendMessage(fromId, "Contraseña correcta, usuario " +
-    //                 fromId + " autorizado");
-    //         } else {
-    //             bot.sendMessage(fromId, "Contraseña incorrecta");
-    //         }
-    //     });
-    //
-    //     bot.onText(/\/setpasswd (.+)/, function (msg, match) {
-    //         var fromId = msg.from.id;
-    //         var strArray = match[1].split(" ");
-    //         var currentPass = strArray[0];
-    //         var newPass = strArray[1];
-    //         pass.isPasswd(currentPass, function () {
-    //             pass.setPasswd(newPass);
-    //             bot.sendMessage(fromId, "Contraseña cambiada");
-    //         }, function () {
-    //             bot.sendMessage(fromId, "Contraseña incorrecta");
-    //         });
-    //     });
-    //
-    //     /**
-    //      * Función para hacer foto desde webcam
-    //      */
-    //     // bot.onText(/\/photo/, function (msg) {
-    //     //     var fromId = msg.from.id;
-    //     //     var fs = require("fs");
-    //     //     photoCam.takePhoto(fromId, function (filename) {
-    //     //         bot.sendPhoto(fromId, filename, {caption: "Foto tomada!"});
-    //     //     });
-    //     // });
-    //
-    //     /*
-    //      * Funciones de prueba/ejemplo
-    //      */
-    //     bot.onText(/\/echo (.+)/, function (msg, match) {
-    //         var fromId = msg.from.id;
-    //         var resp = match[1];
-    //         bot.sendMessage(fromId, resp);
-    //     });
-    //
-    //     // Matches /love
-    //     bot.onText(/\/love/, function (msg, match) {
-    //         var chatId = msg.chat.id;
-    //         var opts = {
-    //             //reply_to_message_id: msg.message_id,
-    //             reply_markup: JSON.stringify({
-    //                 keyboard: [
-    //                     ['Yes, you are the bot of my life ❤'],
-    //                     ['No, sorry there is another one...']]
-    //             })
-    //         };
-    //         bot.sendMessage(chatId, 'Do you love me?', opts);
-    //     });
-    //
-    //     function answerPassword(userID) {
-    //         bot.sendMessage(userID, "No eres un usuario autorizado" +
-    //             "\nIntroduce /passwd seguido de la contraseña");
-    //     }
-    // },
 };
 module.exports = botTelegram;

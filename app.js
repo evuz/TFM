@@ -3,8 +3,10 @@
  */
 var botTelegram = require("./botTelegram");
 var pass = require("./password");
-var alarm = require("./alarm")
+var alarm = require("./alarm");
+var config = require("./config");
 
-alarm.initAlarm(0.25);
+//alarm.initAlarm(0.25);
+config.loadConfig();
 pass.init();
 botTelegram.init();

@@ -9,7 +9,6 @@
   "author": "Jesús Gómez Bellido",
   "license": "ISC",
   "dependencies": {
-    "node-telegram-bot-api":"",
-    "v4l2camera": ""
+    "node-telegram-bot-api":""
   }
 }
