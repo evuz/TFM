@@ -10,7 +10,8 @@ var config = {
     usersAtHome: {},
     nUsersAtHome: {},
     actionAdmin: {
-        addUser: "addUser"
+        addUser: "addUser",
+        csvConfigExample: "csvConfigExample"
     },
     actionBot: {
         isAction: "/",
@@ -21,16 +22,35 @@ var config = {
         photo:"photo"
     },
     currentState: {},
-    loadConfig: function () {
+    addUser: function (userId, name, mac) {
         var self = this;
-        csv.readCSV("config.csv", function (data) {
+        if (!userId)
+            return;
+        if(!name) name = self.users[userId].name;
+        if(!mac) mac = self.users[userId].mac;
+
+        if(!self.users[userId]) {
+            self.users[userId] = {};
+        }
+
+        self.users[userId].name = name;
+        self.users[userId].mac = mac;
+
+        self.saveUsers();
+    },
+    loadInitConfig: function () {
+        var self = this;
+        self.loadConfig("initConfig.csv");
+        self.loadUsers("initUsers.csv");
+    },
+    loadConfig: function (filename) {
+        var self = this;
+        csv.readCSV(filename, function (data) {
             if (data[0].initConfig == "true") {
                 self.initConfig = true;
             } else {
                 self.initConfig = false;
             }
-            if(data[0].adminPass)
-                self.adminPass = data[0].adminPass;
             if(data[0].passwd)
                 self.passwd = data[0].passwd;
             if (data[0].adminPass)
@@ -38,9 +58,16 @@ var config = {
             if (data[0].adminId)
                 self.adminId = data[0].adminId;
         });
-        csv.readCSV("users.csv", function (data) {
+    },
+    loadUsers: function (filename) {
+        var self = this;
+        csv.readCSV(filename, function (data) {
             for(var i = 0; i < data.length; i++) {
-                self.users[data[i].id] = {name: data[i].name, mac: data[i].mac}
+                if (data[i].name == "null")
+                    data[i].name = null;
+                if (data[i].mac == "null")
+                    data[i].mac = null;
+                self.addUser(data[i].id, data[i].name, data[i].mac);
             }
         })
     },
@@ -48,7 +75,7 @@ var config = {
         var data = [];
         data[0] = {initConfig: this.initConfig, passwd: this.passwd,
         adminPass: this.adminPass, adminId: this.adminId};
-        csv.writeCSV("config.csv", data);
+        csv.writeCSV("initConfig.csv", data);
     },
     saveUsers: function () {
         var self = this;
@@ -60,7 +87,7 @@ var config = {
             i++;
         }
 
-        csv.writeCSV("users.csv", data);
+        csv.writeCSV("initUsers.csv", data);
     },
     rooms: {
         salon: {
@@ -71,7 +98,8 @@ var config = {
         patio: {
             puerta: {state: false, value: false},
             luz: {state: false, value: false},
-            alarma: {state: false, value: false}
+            alarma: {state: false, value: false},
+            timbre: {state: false, value: false}
         },
         habitacion: {
             luz: {state: false, value: false},

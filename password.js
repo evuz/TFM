@@ -40,14 +40,17 @@ function rmUser(userId) {
 
 function setPasswd(newPass) {
     config.passwd = newPass;
+    config.saveConfig();
 }
 
 function setAdminPasswd(newPass) {
     config.adminPass = newPass;
+    config.saveConfig();
 }
 
 function setAdminId(adminId) {
     config.adminId = adminId;
+    config.saveConfig();
 }
 
 function init() {

@@ -16,6 +16,19 @@ var botTelegram = {
         // Setup polling way
         bot = new TelegramBot(token, {polling: true});
 
+        bot.on('document', function (doc) {
+            var filename = doc.document.file_name;
+
+            switch (filename) {
+                case "config.csv":
+                    break;
+                case "users.csv":
+                    break;
+                default:
+                    break;
+            }
+        });
+
         /* Máquina de estados */
         bot.on('text', function (msg) {
             var fromId = msg.from.id;
@@ -28,8 +41,8 @@ var botTelegram = {
                 if (isAction == config.actionBot.isAction) {
                     var action = strArray[0].split(config.actionBot.isAction)[1];
                     /* Mira si es una acción conocida */
-                    if (fromId == config.adminId &&
-                        action == config.actionAdmin[action]) {
+                    if (fromId.toString() == config.adminId &&
+                        config.actionAdmin[action]) {
                         switch (action) {
                             case config.actionAdmin.addUser:
                                 bot.sendMessage(fromId, "Introduce el id del usuario");
@@ -37,6 +50,9 @@ var botTelegram = {
                                     action: config.actionAdmin.addUser,
                                     state: 1
                                 };
+                                break;
+                            case config.actionAdmin.csvConfigExample:
+                                bot.sendDocument(fromId, "initConfig.csv");
                                 break;
                             default:
                                 break;
@@ -123,7 +139,8 @@ var botTelegram = {
                                 break;
                             case 4:
                                 var name = msg.text;
-                                config.users[fromId] = {name: name};
+                                config.addUser(fromId, name);
+                                // config.users[fromId] = {name: name};
                                 bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
                                     "introduce tu MAC" +
                                     "\n Si no estás en tu red, introduce 'fin'");
@@ -138,7 +155,8 @@ var botTelegram = {
                                         "\n Para conocer todas las funciones de su central domótica introduzca " +
                                         "el comando /help");
                                 } else {
-                                    config.users[fromId].ip = ip;
+                                    config.addUser(fromId, null, ip);
+                                    // config.users[fromId].ip = ip;
                                     bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
                                         "\nPara conocer todas las funciones de su central domótica " +
                                         "introduzca el comando /help");
@@ -147,12 +165,14 @@ var botTelegram = {
                                 config.currentState[fromId].state = null;
                                 if (!config.initConfig)
                                     config.initConfig = true;
+                                config.saveConfig();
                         }
                     } else if (config.currentState[fromId].action == config.actionAdmin.addUser) {
                         switch (config.currentState[fromId].state) {
                             case 1:
                                 var userId = strArray[0];
-                                config.users[userId] = {name: null, ip: null};
+                                config.addUser(userId, null, null);
+                                // config.users[userId] = {name: null, ip: null};
                                 bot.sendMessage(fromId, "Has añadido al usuario con ID " + userId);
                                 break;
                             default:
