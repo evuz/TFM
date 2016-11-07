@@ -1,14 +1,10 @@
-var csv = require("./helpers/csv");
+var csv = require('./helpers/csv');
+var user = require('./app/user');
 
 var config = {
     initConfig: false,
-    passwd: "1234",
-    adminPass: ",.,ñpqei",
-    adminId: 0,
-    users: {},
-    usersReg: [],
-    usersAtHome: {},
-    nUsersAtHome: {},
+    passwd: null,
+    adminPass: null,
     loadInitConfig: function () {
         var self = this;
         self.loadConfig("initConfig.csv");
@@ -19,44 +15,46 @@ var config = {
         csv.readCSV(filename, function (data) {
             if(!data[0])
                 return;
-            if (data[0].initConfig == "true") {
-                self.initConfig = true;
-            } else {
-                self.initConfig = false;
-            }
+            if (data[0].initConfig)
+                self.initConfig = (data[0].initConfig == 'true');
             if(data[0].passwd)
                 self.passwd = data[0].passwd;
             if (data[0].adminPass)
                 self.adminPass = data[0].adminPass;
-            if (data[0].adminId)
-                self.adminId = data[0].adminId;
         });
     },
     loadUsers: function (filename) {
         var self = this;
         csv.readCSV(filename, function (data) {
             for(var i = 0; i < data.length; i++) {
-                if (data[i].name == "null")
-                    data[i].name = null;
-                if (data[i].mac == "null")
-                    data[i].mac = null;
-                self.addUser(data[i].id, data[i].name, data[i].mac);
+                user.newUser(data[i].username);
+                var p = {};
+                if (data[i].id)
+                    p.id = data[i].id;
+                if (data[i].name)
+                    p.name = data[i].name;
+                if (data[i].mac)
+                    p.mac = data[i].mac;
+                if (data[i].isAdmin)
+                    p.isAdmin = (data[i].isAdmin == 'true');
+                user.editUser(data[i].username, p);
             }
         })
     },
     saveConfig: function () {
         var data = [];
         data[0] = {initConfig: this.initConfig, passwd: this.passwd,
-        adminPass: this.adminPass, adminId: this.adminId};
+        adminPass: this.adminPass};
         csv.writeCSV("initConfig.csv", data);
     },
     saveUsers: function () {
-        var self = this;
+        var users = user.users;
         var data = [];
         var i = 0;
 
-        for(var user in self.users) {
-            data[i] = {id: user, name: self.users[user].name, mac: self.users[user].mac};
+        for(var u in users) {
+            data[i] = {username: u ,id: users[u].id, name: users[u].name, mac: users[u].mac
+                , isAdmin: users[u].isAdmin};
             i++;
         }
 

@@ -12,7 +12,6 @@ var config = require("./config");
 var pass = require("./password");
 
 var bot;
-// TODO: Secuencia de password
 var botTelegram = {
     init: function () {
         var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
@@ -50,6 +49,7 @@ var botTelegram = {
                 user.newUser(username);
                 user.setCurrentState(username, 2, user.getAction('start'));
                 config.initConfig = true;
+                config.saveUsers();
             }else if (user.isUser(username)) {
                 /* Diferencia si es una acción o no lo es, esto servirá luego
                  cuando queramos interacción con el usuario */
@@ -101,7 +101,7 @@ var botTelegram = {
                             }
                         } else {
                             bot.sendMessage(fromId, "No eres un usuario autorizado" +
-                                "\nIntroduce /passwd seguido de la contraseña");
+                                "\nIntroduce /password para loguearte");
                         }
                     } else {
                         bot.sendMessage(fromId, action + " no es una acción válida." +
@@ -132,7 +132,7 @@ var botTelegram = {
                                     break;
                                 case 3:
                                     var name = msg.text;
-                                    user.editUser(username, {name: name});
+                                    user.editUser(username, {id: fromId, name: name});
                                     bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
                                         "introduce tu MAC" +
                                         "\n Si no estás en tu red, introduce 'fin'");
@@ -155,7 +155,7 @@ var botTelegram = {
                                             "introduzca el comando /help");
                                     }
                                     user.setCurrentState(username, null, null);
-                                    config.saveConfig();
+                                    config.saveUsers();
                             }
                             break;
                         case admin.getAction('addUser'):
@@ -164,6 +164,7 @@ var botTelegram = {
                                     var nUser = strArray[0];
                                     user.newUser(nUser);
                                     bot.sendMessage(fromId, "Usuario @" + nUser + " añadido");
+                                    config.saveUsers();
                                     break;
                             }
                             break;
