@@ -7,6 +7,6 @@ var alarm = require("./alarm");
 var config = require("./config");
 
 //alarm.initAlarm(0.25);
-config.loadInitConfig();
-pass.init();
+//pass.init();
+// config.loadInitConfig();
 botTelegram.init();

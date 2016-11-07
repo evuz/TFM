@@ -1,7 +1,7 @@
 /**
  * Created by evuz on 22/09/16.
  */
-var arp = require("./macDiscover");
+var arp = require("./helpers/macDiscover");
 var botTelegram = require("./botTelegram");
 var config = require("./config");
 

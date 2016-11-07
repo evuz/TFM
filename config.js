@@ -1,4 +1,4 @@
-var csv = require("./csv");
+var csv = require("./helpers/csv");
 
 var config = {
     initConfig: false,
@@ -9,35 +9,6 @@ var config = {
     usersReg: [],
     usersAtHome: {},
     nUsersAtHome: {},
-    actionAdmin: {
-        addUser: "addUser",
-        csvConfigExample: "csvConfigExample"
-    },
-    actionBot: {
-        isAction: "/",
-        start: "start",
-        config: "config",
-        passwd: "passwd",
-        server:"server",
-        photo:"photo"
-    },
-    currentState: {},
-    addUser: function (userId, name, mac) {
-        var self = this;
-        if (!userId)
-            return;
-        if(!name) name = self.users[userId].name;
-        if(!mac) mac = self.users[userId].mac;
-
-        if(!self.users[userId]) {
-            self.users[userId] = {};
-        }
-
-        self.users[userId].name = name;
-        self.users[userId].mac = mac;
-
-        self.saveUsers();
-    },
     loadInitConfig: function () {
         var self = this;
         self.loadConfig("initConfig.csv");
@@ -46,6 +17,8 @@ var config = {
     loadConfig: function (filename) {
         var self = this;
         csv.readCSV(filename, function (data) {
+            if(!data[0])
+                return;
             if (data[0].initConfig == "true") {
                 self.initConfig = true;
             } else {

@@ -1,8 +1,6 @@
 var fs = require("fs");
 var csv = require("fast-csv");
 
-var config = require("./config");
-
 function readCSV(filename, cb) {
     var stream = fs.createReadStream(filename);
 
@@ -15,7 +13,6 @@ function readCSV(filename, cb) {
         })
         .on("end", function(){
             cb(arrData);
-            return;
         });
 }
 
