@@ -3,10 +3,12 @@
  */
 var botTelegram = require("./botTelegram");
 var pass = require("./app/password");
-var alarm = require("./alarm");
 var config = require("./app/config");
-
+var whoIs = require("./app/whoIs");
+// var alarm = require("./alarm");
 //alarm.initAlarm(0.25);
+
+whoIs.init(0);
 pass.init(10);
 config.loadInitConfig();
 botTelegram.init();

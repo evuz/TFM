@@ -13,6 +13,8 @@ var user = {
      *      mac:
      *      isAdmin:
      *      registered:
+     *      atHome:
+     *      aux:
      *      currentState: {
      *          action:
      *          state:
@@ -22,7 +24,7 @@ var user = {
     users: {},
     newUser: function (username) {
         this.users[username] = {id: null, name: null, mac: null, isAdmin: false,
-            registered: false, currentState: {action: null, state: null}};
+            registered: false, atHome:null, aux: null, currentState: {action: null, state: null}};
     },
     editUser: function (username, p) {
         var user = this.users[username];
@@ -56,6 +58,33 @@ var user = {
             prop[i] = user[i];
         }
         return prop;
+    },
+    getUserByMAC: function (arrayMAC) {
+        var users = this.users;
+        var usersByMAC = {};
+        var m = {};
+
+        for(var u in users) {
+            usersByMAC[users[u].mac] = {username: u};
+            m[u] = {atHome: false};
+        }
+
+        for (var i = 0; i < arrayMAC.length; i++) {
+            if(usersByMAC[arrayMAC[i].mac]) {
+                m[usersByMAC[arrayMAC[i].mac].username].atHome = true;
+            }
+        }
+        return m;
+    },
+    getUserAtHome: function () {
+        var users = this.users;
+        var m = {};
+
+        for (var u in users) {
+            m[u] = {atHome: users[u].atHome};
+        }
+
+        return m;
     },
     isAction: function (p) {
         for(var action in actions) {

@@ -104,7 +104,7 @@ var arp = {
                     if (table.length >= 2) {
                         var parts = table[1].split(' ').filter(String);
                         if(parts[2] && parts[2].length > 9){
-                            callback(parts[2]);
+                            callback({mac: parts[2]});
                         }else{
                             callback(false);
                         }
