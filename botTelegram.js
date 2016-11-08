@@ -78,6 +78,16 @@ var botTelegram = {
                                     '\n Puedes encontrar tu alias en Ajustes.');
                                 user.setCurrentState(username, 1, admin.getAction('addUser'));
                                 break;
+                            case admin.getAction('addAdmin'):
+                                bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
+                                    ' agregar como administrador');
+                                user.setCurrentState(username, 1, admin.getAction('addAdmin'));
+                                break;
+                            case admin.getAction('rmAdmin'):
+                                bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
+                                    ' eliminarle los permisos de administrador');
+                                user.setCurrentState(username, 1, admin.getAction('rmAdmin'));
+                                break;
                             case admin.getAction('addUsersCSV'):
                                 break;
                             case admin.getAction('changePass'):
@@ -120,7 +130,7 @@ var botTelegram = {
                                 "\nIntroduce /password para loguearte");
                         }
                     } else {
-                        bot.sendMessage(fromId, action + " no es una acción válida." +
+                        bot.sendMessage(fromId, "/" + action + " no es una acción válida." +
                             "\nIntroduzca /help para ver las acciones válidas.");
                     }
                 } else {
@@ -184,6 +194,45 @@ var botTelegram = {
                                     config.saveUsers();
                             }
                             break;
+                        case admin.getAction('addAdmin'):
+                            switch (currentState.state) {
+                                case 1:
+                                    var nUser = strArray[0];
+                                    if (user.isUser(nUser)) {
+                                        user.editUser(nUser, {isAdmin: true});
+                                        bot.sendMessage(fromId, 'El usuario @' + nUser + ' ahora es administrador');
+                                        bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
+                                            'El usuario @' + username + ' le ha dado ' +
+                                            'permisos de administrador');
+                                        config.saveUsers();
+                                    } else {
+                                        bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
+                                    }
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                            }
+                            break;
+                        case admin.getAction('rmAdmin'):
+                            switch (currentState.state) {
+                                case 1:
+                                    var nUser = strArray[0];
+                                    if (username == nUser) {
+                                        bot.sendMessage(fromId, 'Usted mismo no puede quitarse los permisos' +
+                                            'de administrador');
+                                    } else if (user.isUser(nUser)) {
+                                        user.editUser(nUser, {isAdmin: false});
+                                        bot.sendMessage(fromId, 'El usuario @' + nUser + ' ya no es administrador');
+                                        bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
+                                            'El usuario @' + username + ' le ha quitado ' +
+                                            'los permisos de administrador');
+                                        config.saveUsers();
+                                    } else {
+                                        bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
+                                    }
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                            }
+                            break;
                         case admin.getAction('addUser'):
                             switch (currentState.state) {
                                 case 1:
@@ -191,6 +240,7 @@ var botTelegram = {
                                     user.newUser(nUser);
                                     bot.sendMessage(fromId, "Usuario @" + nUser + " añadido");
                                     config.saveUsers();
+                                    user.setCurrentState(username, null, null);
                                     break;
                             }
                             break;
@@ -203,7 +253,7 @@ var botTelegram = {
                                             user.getUserProperties(username, {aux: null}).aux);
                                         self.sayPass(fromId, password);
                                         user.editUser(username, {isAdmin: true});
-                                        user.setCurrentState(username, 3, user.getAction('start'));
+                                        user.setCurrentState(username, null, null);
                                         pass.regUser(username);
                                     } else {
                                         bot.sendMessage(fromId, "La contraseña no es válida." +
@@ -225,6 +275,7 @@ var botTelegram = {
                                     } else {
                                         bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }
+                                    user.setCurrentState(username, null, null);
                                     break;
                             }
                             break;

@@ -2,6 +2,8 @@ var user = require('./user');
 
 var actions = {
     addUser: "addUser",
+    addAdmin: "addAdmin",
+    rmAdmin: "rmAdmin",
     addUsersCSV: "addUsersCSV",
     changePass: "changePass",
     whoAtHome: "whoAtHome",
