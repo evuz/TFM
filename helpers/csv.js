@@ -21,7 +21,7 @@ function writeCSV(filename, data) {
     var writableStream = fs.createWriteStream(filename);
 
     writableStream.on("finish", function(){
-        console.log("DONE!");
+        // console.log("DONE!");
     });
 
     csvStream.pipe(writableStream);

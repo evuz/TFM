@@ -3,7 +3,7 @@
  */
 var arp = require("./helpers/macDiscover");
 var botTelegram = require("./botTelegram");
-var config = require("./config");
+var config = require("./app/config");
 
 var usersByMAC = {};
 var advise = false;

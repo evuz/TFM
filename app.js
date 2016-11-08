@@ -2,9 +2,9 @@
  * Created by JGB on 10/09/16.
  */
 var botTelegram = require("./botTelegram");
-var pass = require("./password");
+var pass = require("./app/password");
 var alarm = require("./alarm");
-var config = require("./config");
+var config = require("./app/config");
 
 //alarm.initAlarm(0.25);
 pass.init(10);

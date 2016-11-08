@@ -8,8 +8,8 @@ var user = require("./app/user");
 var server = require("./helpers/server");
 // var photoCam = require("./helpers/photo");
 
-var config = require("./config");
-var pass = require("./password");
+var config = require("./app/config");
+var pass = require("./app/password");
 
 var bot;
 var botTelegram = {
@@ -30,6 +30,16 @@ var botTelegram = {
             }
         });
 
+        var self = this;
+        bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+            var options = {
+                chat_id: callbackQuery.message.chat.id,
+                message_id: callbackQuery.message.message_id
+            };
+
+            bot.editMessageText('Mensaje editado', options);
+        });
+
         /* Máquina de estados */
         bot.on('text', function (msg) {
             var fromId = msg.from.id;
@@ -43,13 +53,17 @@ var botTelegram = {
                 //     "Por favor, introduzca la contraseña de administrador.");
                 // user.newUser(username);
                 // user.setCurrentState(username, , user.getAction('start'));
+                var key = pass.generatePass();
                 bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                     "usted va a ser el usuario administrador.\n" +
-                    "Por favor, introduzca la contraseña.");
+                    "Por favor, introduzca la contraseña." +
+                    "\nEsta contraseña debe ser un PIN de cuatro números");
+                self.askPass(fromId,key);
                 user.newUser(username);
+                user.editUser(username,{aux: key});
                 user.setCurrentState(username, 2, user.getAction('start'));
                 config.initConfig = true;
-                config.saveUsers();
+                // config.saveUsers();
             }else if (user.isUser(username)) {
                 /* Diferencia si es una acción o no lo es, esto servirá luego
                  cuando queramos interacción con el usuario */
@@ -82,7 +96,9 @@ var botTelegram = {
                                 "para comenzar introduzca su nombre");
                             user.setCurrentState(username, 3, user.getAction('start'));
                         } else if (action == user.getAction('password')) {
-                            bot.sendMessage(fromId, "Introduzca la contraseña");
+                            var key = pass.generatePass();
+                            self.askPass(fromId, key);
+                            user.editUser(username,{aux: key});
                             user.setCurrentState(username, 1, user.getAction('password'));
                         } else if (pass.isReg(username)) {
                             switch (action) {
@@ -115,7 +131,7 @@ var botTelegram = {
                                 case 1:
                                     var password = strArray[0];
                                     pass.setAdminPasswd(password);
-                                    admin.setAdmin(username, true)
+                                    admin.setAdmin(username, true);
                                     bot.sendMessage(fromId, "Contraseña de administrador establecida." +
                                         "\n\nAhora introduzca la contraseña de usuario");
                                     user.editUser(username, {isAdmin: true});
@@ -123,12 +139,22 @@ var botTelegram = {
                                     break;
                                 case 2:
                                     password = strArray[0];
-                                    pass.setPasswd(password);
-                                    bot.sendMessage(fromId, "Contraseña establecida." +
-                                        "\n\nIntroduza su nombre");
-                                    user.editUser(username, {isAdmin: true});
-                                    user.setCurrentState(username, 3, user.getAction('start'));
-                                    pass.regUser(username);
+                                    if (pass.checkPass(password)) {
+                                        password = pass.setPassword(password,
+                                            user.getUserProperties(username, {aux: null}).aux);
+                                        self.sayPass(fromId, password);
+                                        setTimeout(function () {
+                                            bot.sendMessage(fromId, "Introduza su nombre");
+                                        },100);
+                                        user.editUser(username, {isAdmin: true});
+                                        user.setCurrentState(username, 3, user.getAction('start'));
+                                        pass.regUser(username);
+                                    } else {
+                                        bot.sendMessage(fromId, "La contraseña no es válida." +
+                                            "\nLa contraseña debe ser un PIN de cuatro números." +
+                                            "\nPor ejemplo: 1234");
+                                        self.askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
+                                    }
                                     break;
                                 case 3:
                                     var name = msg.text;
@@ -172,8 +198,19 @@ var botTelegram = {
                             switch (currentState.state) {
                                 case 1:
                                     var password = strArray[0];
-                                    pass.setPasswd(password);
-                                    bot.sendMessage(fromId, 'Contraseña cambiada');
+                                    if (pass.checkPass(password)) {
+                                        password = pass.setPassword(password,
+                                            user.getUserProperties(username, {aux: null}).aux);
+                                        self.sayPass(fromId, password);
+                                        user.editUser(username, {isAdmin: true});
+                                        user.setCurrentState(username, 3, user.getAction('start'));
+                                        pass.regUser(username);
+                                    } else {
+                                        bot.sendMessage(fromId, "La contraseña no es válida." +
+                                            "\nLa contraseña debe ser un PIN de cuatro números." +
+                                            "\nPor ejemplo: 1234");
+                                        self.askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
+                                    }
                                     break;
                             }
                             break;
@@ -181,7 +218,8 @@ var botTelegram = {
                             switch (currentState.state) {
                                 case 1:
                                     var password = strArray[0];
-                                    if(pass.isPassword(password)) {
+                                    if(pass.isPassword(password,
+                                            user.getUserProperties(username, {aux:null}).aux)) {
                                         bot.sendMessage(fromId, 'Contraseña correcta');
                                         pass.regUser(username);
                                     } else {
@@ -204,6 +242,38 @@ var botTelegram = {
     },
     talk: function (chatId, msg) {
         bot.sendMessage(chatId, msg);
+    },
+    askPass: function (chatId, key) {
+        var options = {
+            reply_markup: {
+                inline_keyboard: [[{
+                    text: 'Editar',
+                    callback_data: 'password_key'
+                }]]
+            }
+        };
+        setTimeout(function() {
+            bot.sendMessage(chatId, 'Introduzca su contraseña sumandole a cada cifra su ' +
+                'dígito correspondiente de la key' +
+                '\nEjemplo:' +
+                '\nContraseña: 1254' +
+                '\nKey: 7 5 8 9' +
+                '\nSolución: 8733');
+        }, 200);
+        setTimeout(function () {
+            bot.sendMessage(chatId, 'Key: ' + key, options);
+        },300);
+    },
+    sayPass: function (chatId, pass) {
+        var options = {
+            reply_markup: {
+                inline_keyboard: [[{
+                    text: 'Editar',
+                    callback_data: 'password_key'
+                }]]
+            }
+        };
+        bot.sendMessage(chatId, 'Su contraseña es: ' + pass, options);
     }
 };
 

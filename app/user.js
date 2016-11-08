@@ -48,6 +48,15 @@ var user = {
 
         return user['currentState'];
     },
+    getUserProperties: function (username, p) {
+        var user = this.users[username];
+        var prop = {};
+
+        for(var i in p) {
+            prop[i] = user[i];
+        }
+        return prop;
+    },
     isAction: function (p) {
         for(var action in actions) {
             if (actions[action] == p)

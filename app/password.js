@@ -1,4 +1,4 @@
-var user = require ('./app/user');
+var user = require ('./user');
 var config = require("./config");
 
 var password = {
@@ -36,16 +36,66 @@ var password = {
             return false;
         }
     },
-    setPasswd: function(newPass) {
-        config.passwd = newPass;
+    checkPass:function (pass) {
+        if(pass.length != 4)
+            return false;
+
+        for (var i = 0; i < pass.length; i++) {
+            var n = pass.substring(i, i + 1);
+            if(isNaN(n))
+                return false;
+        }
+        return true;
+    },
+    setPassword: function(newPass, key) {
+        var pass = this.decodePass(newPass, key);
+
+        config.passwd = pass;
         config.saveConfig();
+        return pass;
     },
     setAdminPasswd: function (newPass) {
         config.adminPass = newPass;
         config.saveConfig();
     },
-    isPassword: function (pass) {
-        return pass == config.passwd;
+    isPassword: function (pass, key) {
+        var decPass = this.decodePass(pass,key);
+
+        return decPass == config.passwd;
+    },
+    generatePass: function () {
+        var length = 4;
+        if(config.passwd)
+            length = config.passwd.length;
+        var key = "";
+        for (var i = 0; i < length; i++) {
+            var aux = Math.floor(Math.random()*9);
+            key += aux.toString() + " ";
+        }
+        return key;
+    },
+    decodePass: function (encPass, key) {
+        var aux;
+        var auxKey;
+        var auxPass;
+        var pass = "";
+
+        for (var i = 0; i < encPass.length; i++) {
+            aux = encPass.substring(i, i+1);
+            aux = parseInt(aux);
+            auxKey = key.substring(i*2, i*2 + 1);
+            auxKey = parseInt(auxKey);
+
+            auxPass = aux - auxKey;
+
+            if(auxPass < 0) {
+                aux += 10;
+                auxPass = aux - auxKey;
+            }
+
+            pass += auxPass.toString();
+        }
+        return pass;
     }
 };
 
@@ -88,7 +138,7 @@ module.exports = password;
 //     }
 // }
 
-// function setPasswd(newPass) {
+// function setPassword(newPass) {
 //     config.passwd = newPass;
 //     config.saveConfig();
 // }
@@ -111,7 +161,7 @@ module.exports = password;
 // exports.isUser = isUser;
 // exports.addUser = addUser;
 // exports.isPasswd = isPasswd;
-// exports.setPasswd = setPasswd;
+// exports.setPassword = setPassword;
 // exports.setAdminPasswd = setAdminPasswd;
 // exports.setAdminId = setAdminId;
 // exports.getKeyboard = getKeyboard;
