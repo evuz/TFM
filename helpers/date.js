@@ -1,9 +1,13 @@
 var date = {
     getHour: function () {
         var d = new Date();
-        var date = this.pad(d.getHours()) + ':' +
-            this.pad(9);
-        return date;
+        return this.pad(d.getHours()) + ':' +
+            this.pad(d.getMinutes());
+    },
+    getDay: function () {
+        var d = new Date();
+        return  this.pad(d.getFullYear()) + '_' +
+                this.pad(d.getMonth()) + '_' + this.pad(d.getDay());
     },
     pad: function (n) {
         if (n < 10) {

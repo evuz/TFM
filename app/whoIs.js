@@ -1,11 +1,20 @@
+var fs = require("fs");
 var arp = require("../helpers/macDiscover");
 var user = require('./user');
+var admin = require('./admin');
 var date = require('../helpers/date');
+var botTelegram = require('../botTelegram');
+var csv = require('../helpers/csv');
 
 var whoIs = {
     advise: true,
+    filename: "",
     init: function (T) {
         var self = this;
+        self.changeFilename();
+        setInterval(function () {
+            self.changeFilename();
+        }, 60*1000);
         setInterval(function () {
             arp.getAllMAC("192.168.1.", function (mac) {
                 var nAtHome = 0;
@@ -16,26 +25,59 @@ var whoIs = {
                     var state = whoAtHome[u].atHome;
                     if(nState && state) {
                         nAtHome++;
-                        console.log(u + ' sigue dentro');
+                        // console.log(u + ' sigue dentro');
                     } else if (nState && !state) {
                         user.editUser(u, {atHome: date.getHour()});
                         nAtHome++;
-                        console.log(u + ' ha entrado');
+                        self.updateReg({name: whoAtHome[u].name, action: 'entra', hour: date.getHour()});
+                        // console.log(u + ' ha entrado');
                     } else if (!nState && state) {
                         user.editUser(u, {atHome: null});
-                        console.log(u + ' ha salido');
+                        self.updateReg({name: whoAtHome[u].name, action: 'sale', hour: date.getHour()});
+                        // console.log(u + ' ha salido');
                     } else {
-                        console.log(u + ' sigue fuera');
+                        // console.log(u + ' sigue fuera');
                     }
                 }
-                if (!nAtHome && advise) {
-                    console.log('No hay nadie en casa!')
-                    advise = false;
+                if (!nAtHome && self.advise) {
+                    // console.log('No hay nadie en casa!');
+                    var admins = admin.getAdminId();
+                    for (var adm in admins) {
+                        botTelegram.talk(admins[adm], 'No hay nadie en casa.' +
+                            '\n¿Desea activar la alarma?');
+                    }
+                    self.advise = false;
                 } else if (nAtHome){
-                    advise = true;
+                    // console.log('Hay ' + nAtHome + ' usuarios en casa');
+                    self.advise = true;
                 }
             })
         }, T * 60 * 1000);
+    },
+    changeFilename: function () {
+        var self = this;
+        var today = date.getDay();
+        if (today != this.filename) {
+            self.filename = today;
+            fs.readFile('files/reg/' + this.filename + '.csv', function (error) {
+                if(error) {
+                    console.log(error);
+                    fs.writeFile('files/reg/' + self.filename + '.csv', "");
+                }
+            });
+            csv.readCSV('reg.csv', function (reg) {
+                reg.push({day: today});
+                csv.writeCSV('reg.csv', reg);
+            })
+        }
+    },
+    updateReg: function (p) {
+        var self = this;
+
+        csv.readCSV('reg/' + self.filename + '.csv', function (reg) {
+            reg.push(p);
+            csv.writeCSV('reg/' + self.filename + '.csv', reg);
+        })
     }
 };
 

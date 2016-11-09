@@ -2,7 +2,7 @@ var fs = require("fs");
 var csv = require("fast-csv");
 
 function readCSV(filename, cb) {
-    var stream = fs.createReadStream(filename);
+    var stream = fs.createReadStream('files/' + filename);
 
     var arrData = [];
 
@@ -18,7 +18,7 @@ function readCSV(filename, cb) {
 
 function writeCSV(filename, data) {
     var csvStream = csv.createWriteStream({headers: true});
-    var writableStream = fs.createWriteStream(filename);
+    var writableStream = fs.createWriteStream('files/' + filename);
 
     writableStream.on("finish", function(){
         // console.log("DONE!");

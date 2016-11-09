@@ -36,6 +36,7 @@ var admin = {
                 adminId.push(users[u].id);
             }
         }
+        return adminId;
     }
 };
 

@@ -81,7 +81,7 @@ var user = {
         var m = {};
 
         for (var u in users) {
-            m[u] = {atHome: users[u].atHome};
+            m[u] = {atHome: users[u].atHome, name: users[u].name};
         }
 
         return m;

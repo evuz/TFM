@@ -4,12 +4,13 @@
 var TelegramBot = require('node-telegram-bot-api');
 var admin = require("./app/admin");
 var user = require("./app/user");
-
-var server = require("./helpers/server");
-// var photoCam = require("./helpers/photo");
-
 var config = require("./app/config");
 var pass = require("./app/password");
+
+var csv = require("./helpers/csv");
+var date = require("./helpers/date");
+var server = require("./helpers/server");
+// var photoCam = require("./helpers/photo");
 
 var bot;
 var botTelegram = {
@@ -97,6 +98,14 @@ var botTelegram = {
                             case admin.getAction('whoAtHome'):
                                 break;
                             case admin.getAction('showReg'):
+                                csv.readCSV('reg.csv', function (reg) {
+                                    var txt = "Pulsa el día que quieres recibir";
+                                    for (var i in reg) {
+                                        txt += '\n/' + reg[i].day;
+                                    }
+                                    bot.sendMessage(fromId, txt);
+                                    user.setCurrentState(username, 1, admin.getAction('showReg'))
+                                });
                                 break;
                         }
                         // Acciones de los usuarios
@@ -130,8 +139,13 @@ var botTelegram = {
                                 "\nIntroduce /password para loguearte");
                         }
                     } else {
-                        bot.sendMessage(fromId, "/" + action + " no es una acción válida." +
-                            "\nIntroduzca /help para ver las acciones válidas.");
+                        if(user.getCurrentState(username).action == admin.getAction('showReg')) {
+                            var doc = 'files/reg/' + action + '.csv';
+                            bot.sendDocument(fromId, doc);
+                        } else {
+                            bot.sendMessage(fromId, "/" + action + " no es una acción válida." +
+                                "\nIntroduzca /help para ver las acciones válidas.");
+                        }
                     }
                 } else {
                     var currentState = user.getCurrentState(username);
