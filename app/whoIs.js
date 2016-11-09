@@ -5,6 +5,7 @@ var admin = require('./admin');
 var date = require('../helpers/date');
 var botTelegram = require('../botTelegram');
 var csv = require('../helpers/csv');
+var alarm = require('../alarm');
 
 var whoIs = {
     advise: true,
@@ -18,6 +19,7 @@ var whoIs = {
         setInterval(function () {
             arp.getAllMAC("192.168.1.", function (mac) {
                 var nAtHome = 0;
+                var n = false;
                 var nWhoAtHome = user.getUserByMAC(mac); // whoAtHome
                 var whoAtHome = user.getUserAtHome(); // whoAtHome - 1
                 for (var u in whoAtHome) {
@@ -29,6 +31,7 @@ var whoIs = {
                     } else if (nState && !state) {
                         user.editUser(u, {atHome: date.getHour()});
                         nAtHome++;
+                        n = true;
                         self.updateReg({name: whoAtHome[u].name, action: 'entra', hour: date.getHour()});
                         // console.log(u + ' ha entrado');
                     } else if (!nState && state) {
@@ -44,11 +47,20 @@ var whoIs = {
                     var admins = admin.getAdminId();
                     for (var adm in admins) {
                         botTelegram.talk(admins[adm], 'No hay nadie en casa.' +
-                            '\n¿Desea activar la alarma?');
+                            '\n¿Desea activar la alarma?' +
+                            '\n/' + user.getAction('alarmAct'));
                     }
                     self.advise = false;
+                } else if(n && alarm.isActive()) {
+                    for(var u in nWhoAtHome) {
+                        if(nWhoAtHome[u].atHome) {
+                            botTelegram.talk(nWhoAtHome[u].id, "La alarma está activa." +
+                                "\n¿Quieres desactivarla?" +
+                                '\n/' + user.getAction('alarmDes'));
+                        }
+                    }
                 } else if (nAtHome){
-                    // console.log('Hay ' + nAtHome + ' usuarios en casa');
+                    // console.log('Casa');
                     self.advise = true;
                 }
             })

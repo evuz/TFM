@@ -8,7 +8,7 @@ var whoIs = require("./app/whoIs");
 // var alarm = require("./alarm");
 //alarm.initAlarm(0.25);
 
-whoIs.init(1);
+whoIs.init(0.15);
 pass.init(10);
 config.loadInitConfig();
 botTelegram.init();
