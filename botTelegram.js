@@ -6,6 +6,7 @@ var admin = require("./app/admin");
 var user = require("./app/user");
 var config = require("./app/config");
 var pass = require("./app/password");
+var alarm = require("./alarm");
 
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
@@ -76,7 +77,7 @@ var botTelegram = {
                         switch (action) {
                             case admin.getAction('addUser'):
                                 bot.sendMessage(fromId, 'Introduzca el alias del usuario sin @.' +
-                                    '\n Puedes encontrar tu alias en Ajustes.');
+                                    '\nPuedes encontrar tu alias en Ajustes.');
                                 user.setCurrentState(username, 1, admin.getAction('addUser'));
                                 break;
                             case admin.getAction('addAdmin'):
@@ -118,7 +119,25 @@ var botTelegram = {
                             var key = pass.generatePass();
                             self.askPass(fromId, key);
                             user.editUser(username,{aux: key});
-                            user.setCurrentState(username, 1, user.getAction('password'));
+                            user.setCurrentState(username, 1, action);
+                        } else if (action == user.getAction('alarmAct')) {
+                            if(!alarm.isActive()) {
+                                var key = pass.generatePass();
+                                self.askPass(fromId, key);
+                                user.editUser(username,{aux: key});
+                                user.setCurrentState(username, 1, action);
+                            } else {
+                                bot.sendMessage(fromId, "La alarma ya está activa");
+                            }
+                        } else if (action == user.getAction('alarmDes')) {
+                            if(alarm.isActive()) {
+                                var key = pass.generatePass();
+                                self.askPass(fromId, key);
+                                user.editUser(username, {aux: key});
+                                user.setCurrentState(username, 1, action);
+                            } else {
+                                bot.sendMessage(fromId, "La alarma ya está desactiva");
+                            }
                         } else if (pass.isReg(username)) {
                             switch (action) {
                                 case user.getAction('server'):
@@ -130,6 +149,11 @@ var botTelegram = {
                                         bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
                                             "/server <port>");
                                     }
+                                    break;
+                                case user.getAction('addUserTemp'):
+                                    bot.sendMessage(fromId, 'Introduzca el alias del usuario sin @.' +
+                                        '\nPuedes encontrar tu alias en Ajustes.');
+                                    user.setCurrentState(username, 2, admin.getAction('addUser'));
                                     break;
                                 default:
                                     break;
@@ -256,6 +280,16 @@ var botTelegram = {
                                     config.saveUsers();
                                     user.setCurrentState(username, null, null);
                                     break;
+                                case 2:
+                                    var nUser = strArray[0];
+                                    user.newUser(nUser);
+                                    user.editUser(nUser, {add: Date.now()});
+                                    bot.sendMessage(fromId, "Usuario @" + nUser + " añadido durante " +
+                                        user.timeProv + " minutos");
+                                    config.saveUsers();
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                                    break;
                             }
                             break;
                         case admin.getAction('changePass'):
@@ -286,6 +320,36 @@ var botTelegram = {
                                             user.getUserProperties(username, {aux:null}).aux)) {
                                         bot.sendMessage(fromId, 'Contraseña correcta');
                                         pass.regUser(username);
+                                    } else {
+                                        bot.sendMessage(fromId, 'Contraseña incorrecta')
+                                    }
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                            }
+                            break;
+                        case user.getAction('alarmAct'):
+                            switch (currentState.state) {
+                                case 1:
+                                    var password = strArray[0];
+                                    if(pass.isPassword(password,
+                                            user.getUserProperties(username, {aux:null}).aux)) {
+                                        bot.sendMessage(fromId, 'La alarma se ha activado');
+                                        alarm.activate();
+                                    } else {
+                                        bot.sendMessage(fromId, 'Contraseña incorrecta')
+                                    }
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                            }
+                            break;
+                        case user.getAction('alarmDes'):
+                            switch (currentState.state) {
+                                case 1:
+                                    var password = strArray[0];
+                                    if(pass.isPassword(password,
+                                            user.getUserProperties(username, {aux:null}).aux)) {
+                                        bot.sendMessage(fromId, 'La alarma se ha desactivado');
+                                        alarm.deactivate();
                                     } else {
                                         bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }

@@ -35,6 +35,8 @@ var config = {
                     p.name = data[i].name;
                 if (data[i].mac)
                     p.mac = data[i].mac;
+                if (data[i].add)
+                    p.add = data[i].add;
                 if (data[i].isAdmin)
                     p.isAdmin = (data[i].isAdmin == 'true');
                 user.editUser(data[i].username, p);
@@ -54,7 +56,7 @@ var config = {
 
         for(var u in users) {
             data[i] = {username: u ,id: users[u].id, name: users[u].name, mac: users[u].mac
-                , isAdmin: users[u].isAdmin};
+                , isAdmin: users[u].isAdmin, add: users[u].add};
             i++;
         }
 

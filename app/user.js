@@ -1,8 +1,10 @@
 var actions = {
     start: "start",
     password: "password",
-    addUserTemp: "addUserTemp",
-    server: "server"
+    addUserTemp: "addUser",
+    server: "server",
+    alarmAct: "alarmAct",
+    alarmDes: "alarmDes"
 };
 
 var user = {
@@ -15,6 +17,7 @@ var user = {
      *      registered:
      *      atHome:
      *      aux:
+     *      reg:
      *      currentState: {
      *          action:
      *          state:
@@ -22,9 +25,31 @@ var user = {
      *  }
      */
     users: {},
+    timeProv: 2,
+    init: function () {
+        var self = this;
+        setInterval(function () {
+            for(var u in self.users) {
+                var reg = self.users[u].add;
+                if(reg) {
+                    var t = (Date.now() - reg)*1000;
+                    if (t > (self.timeProv*1000)) {
+                        delete self.users[u];
+                        // Tiene que escribir en el CSV la nueva configuración
+                    }
+                }
+            }
+            console.log('Usuarios');
+            for(var u in self.users) {
+                console.log('@' + u);
+            }
+            console.log('\n');
+        }, 15*1000);
+    },
     newUser: function (username) {
         this.users[username] = {id: null, name: null, mac: null, isAdmin: false,
-            registered: false, atHome:null, aux: null, currentState: {action: null, state: null}};
+            registered: false, add: null, atHome:null, aux: null,
+            currentState: {action: null, state: null}};
     },
     editUser: function (username, p) {
         var user = this.users[username];
@@ -65,13 +90,14 @@ var user = {
         var m = {};
 
         for(var u in users) {
-            usersByMAC[users[u].mac] = {username: u};
+            usersByMAC[users[u].mac] = {username: u, id: users[u].id};
             m[u] = {atHome: false};
         }
 
         for (var i = 0; i < arrayMAC.length; i++) {
             if(usersByMAC[arrayMAC[i].mac]) {
                 m[usersByMAC[arrayMAC[i].mac].username].atHome = true;
+                m[usersByMAC[arrayMAC[i].mac].username].id = usersByMAC[arrayMAC[i].mac].id;
             }
         }
         return m;
