@@ -13,13 +13,16 @@ var date = require("./helpers/date");
 var server = require("./helpers/server");
 // var photoCam = require("./helpers/photo");
 
-var bot;
+// var bot;
 var botTelegram = {
+    bot: 0,
     init: function () {
         var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
-        bot = new TelegramBot(token, {polling: true});
+        var self = this;
 
-        bot.on('document', function (doc) {
+        self.bot = new TelegramBot(token, {polling: true});
+
+        self.bot.on('document', function (doc) {
             var filename = doc.document.file_name;
 
             switch (filename) {
@@ -32,35 +35,42 @@ var botTelegram = {
             }
         });
 
-        var self = this;
-        bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+        self.bot.on('location', function (msg) {
+            var apiKey = 'f7398856e1afb5ec1e2e8d97a1ac91d6';
+            var url = 'api.openweathermap.org/data/2.5/weather?' +
+                'lat=' + msg.location.latitude + '&lon=' + msg.location.longitude
+                + '&appid=' + apiKey;
+            console.log(url);
+        });
+
+        self.bot.on('callback_query', function onCallbackQuery(callbackQuery) {
             var options = {
                 chat_id: callbackQuery.message.chat.id,
                 message_id: callbackQuery.message.message_id
             };
 
-            bot.editMessageText('Mensaje editado', options);
+            self.bot.editMessageText('Mensaje editado', options);
         });
 
         /* Máquina de estados */
-        bot.on('text', function (msg) {
+        self.bot.on('text', function (msg) {
             var fromId = msg.from.id;
             var username = msg.from.username;
             var strArray = msg.text.split(" ");
             var isAction = strArray[0].substring(0, 1) == '/';
 
             if(!config.initConfig) {
-                // bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
+                // self.bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                 //     "usted va a ser el usuario administrador.\n" +
                 //     "Por favor, introduzca la contraseña de administrador.");
                 // user.newUser(username);
                 // user.setCurrentState(username, , user.getAction('start'));
                 var key = pass.generatePass();
-                bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
+                self.bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                     "usted va a ser el usuario administrador.\n" +
                     "Por favor, introduzca la contraseña." +
                     "\nEsta contraseña debe ser un PIN de cuatro números");
-                self.askPass(fromId,key);
+                askPass(fromId,key);
                 user.newUser(username);
                 user.editUser(username,{aux: key});
                 user.setCurrentState(username, 2, user.getAction('start'));
@@ -81,19 +91,19 @@ var botTelegram = {
                                 user.setCurrentState(username, 1, admin.getAction('addUser'));
                                 break;
                             case admin.getAction('addAdmin'):
-                                bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
+                                self.bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
                                     ' agregar como administrador');
                                 user.setCurrentState(username, 1, admin.getAction('addAdmin'));
                                 break;
                             case admin.getAction('rmAdmin'):
-                                bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
+                                self.bot.sendMessage(fromId, 'Introduce al usuario que deseas' +
                                     ' eliminarle los permisos de administrador');
                                 user.setCurrentState(username, 1, admin.getAction('rmAdmin'));
                                 break;
                             case admin.getAction('addUsersCSV'):
                                 break;
                             case admin.getAction('changePass'):
-                                bot.sendMessage(fromId, 'Introduzca la contraseña nueva');
+                                self.bot.sendMessage(fromId, 'Introduzca la contraseña nueva');
                                 user.setCurrentState(username, 1, admin.getAction('changePass'));
                                 break;
                             case admin.getAction('whoAtHome'):
@@ -104,7 +114,7 @@ var botTelegram = {
                                     for (var i in reg) {
                                         txt += '\n/' + reg[i].day;
                                     }
-                                    bot.sendMessage(fromId, txt);
+                                    self.bot.sendMessage(fromId, txt);
                                     user.setCurrentState(username, 1, admin.getAction('showReg'))
                                 });
                                 break;
@@ -112,12 +122,12 @@ var botTelegram = {
                         // Acciones de los usuarios
                     } else if (user.isAction(action)) {
                         if (action == user.getAction('start')) {
-                            bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
+                            self.bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
                                 "para comenzar introduzca su nombre");
                             user.setCurrentState(username, 3, user.getAction('start'));
                         } else if (action == user.getAction('password')) {
                             var key = pass.generatePass();
-                            self.askPass(fromId, key);
+                            askPass(fromId, key);
                             user.editUser(username,{aux: key});
                             user.setCurrentState(username, 1, action);
                         } else if (action == user.getAction('alarmAct')) {
@@ -144,9 +154,9 @@ var botTelegram = {
                                     var port = strArray[1];
                                     if (port) {
                                         var s = server.iniciar(port);
-                                        bot.sendMessage(fromId, s);
+                                        self.bot.sendMessage(fromId, s);
                                     } else {
-                                        bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
+                                        self.bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
                                             "/server <port>");
                                     }
                                     break;
@@ -159,15 +169,15 @@ var botTelegram = {
                                     break;
                             }
                         } else {
-                            bot.sendMessage(fromId, "No eres un usuario autorizado" +
+                            self.bot.sendMessage(fromId, "No eres un usuario autorizado" +
                                 "\nIntroduce /password para loguearte");
                         }
                     } else {
                         if(user.getCurrentState(username).action == admin.getAction('showReg')) {
                             var doc = 'files/reg/' + action + '.csv';
-                            bot.sendDocument(fromId, doc);
+                            self.bot.sendDocument(fromId, doc);
                         } else {
-                            bot.sendMessage(fromId, "/" + action + " no es una acción válida." +
+                            self.bot.sendMessage(fromId, "/" + action + " no es una acción válida." +
                                 "\nIntroduzca /help para ver las acciones válidas.");
                         }
                     }
@@ -180,7 +190,7 @@ var botTelegram = {
                                     var password = strArray[0];
                                     pass.setAdminPasswd(password);
                                     admin.setAdmin(username, true);
-                                    bot.sendMessage(fromId, "Contraseña de administrador establecida." +
+                                    self.bot.sendMessage(fromId, "Contraseña de administrador establecida." +
                                         "\n\nAhora introduzca la contraseña de usuario");
                                     user.editUser(username, {isAdmin: true});
                                     user.setCurrentState(username, 2, user.getAction('start'));
@@ -190,24 +200,24 @@ var botTelegram = {
                                     if (pass.checkPass(password)) {
                                         password = pass.setPassword(password,
                                             user.getUserProperties(username, {aux: null}).aux);
-                                        self.sayPass(fromId, password);
+                                        sayPass(fromId, password);
                                         setTimeout(function () {
-                                            bot.sendMessage(fromId, "Introduza su nombre");
+                                            self.bot.sendMessage(fromId, "Introduza su nombre");
                                         },100);
                                         user.editUser(username, {isAdmin: true});
                                         user.setCurrentState(username, 3, user.getAction('start'));
                                         pass.regUser(username);
                                     } else {
-                                        bot.sendMessage(fromId, "La contraseña no es válida." +
+                                        self.bot.sendMessage(fromId, "La contraseña no es válida." +
                                             "\nLa contraseña debe ser un PIN de cuatro números." +
                                             "\nPor ejemplo: 1234");
-                                        self.askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
+                                        askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
                                     }
                                     break;
                                 case 3:
                                     var name = msg.text;
                                     user.editUser(username, {id: fromId, name: name});
-                                    bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
+                                    self.bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
                                         "introduce tu MAC" +
                                         "\n Si no estás en tu red, introduce 'fin'");
                                     user.setCurrentState(username, 4, user.getAction('start'));
@@ -215,7 +225,7 @@ var botTelegram = {
                                 case 4:
                                     var mac = strArray[0];
                                     if (mac == "fin") {
-                                        bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario" +
+                                        self.bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario" +
                                             "\n recuerde introducir su IP cuando esté en casa con el comando" +
                                             "/myMAC < suMAC >." +
                                             "\n Para conocer todas las funciones de su central domótica introduzca " +
@@ -224,7 +234,7 @@ var botTelegram = {
                                         // config.addUser(fromId, null, ip);
                                         // config.users[fromId].ip = ip;
                                         user.editUser(username, {mac: mac});
-                                        bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
+                                        self.bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
                                             "\nPara conocer todas las funciones de su central domótica " +
                                             "introduzca el comando /help");
                                     }
@@ -238,13 +248,13 @@ var botTelegram = {
                                     var nUser = strArray[0];
                                     if (user.isUser(nUser)) {
                                         user.editUser(nUser, {isAdmin: true});
-                                        bot.sendMessage(fromId, 'El usuario @' + nUser + ' ahora es administrador');
-                                        bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
+                                        self.bot.sendMessage(fromId, 'El usuario @' + nUser + ' ahora es administrador');
+                                        self.bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
                                             'El usuario @' + username + ' le ha dado ' +
                                             'permisos de administrador');
                                         config.saveUsers();
                                     } else {
-                                        bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
+                                        self.bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
                                     }
                                     user.setCurrentState(username, null, null);
                                     break;
@@ -255,17 +265,17 @@ var botTelegram = {
                                 case 1:
                                     var nUser = strArray[0];
                                     if (username == nUser) {
-                                        bot.sendMessage(fromId, 'Usted mismo no puede quitarse los permisos' +
+                                        self.bot.sendMessage(fromId, 'Usted mismo no puede quitarse los permisos' +
                                             'de administrador');
                                     } else if (user.isUser(nUser)) {
                                         user.editUser(nUser, {isAdmin: false});
-                                        bot.sendMessage(fromId, 'El usuario @' + nUser + ' ya no es administrador');
-                                        bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
+                                        self.bot.sendMessage(fromId, 'El usuario @' + nUser + ' ya no es administrador');
+                                        self.bot.sendMessage(user.getUserProperties(nUser, {id: null}).id,
                                             'El usuario @' + username + ' le ha quitado ' +
                                             'los permisos de administrador');
                                         config.saveUsers();
                                     } else {
-                                        bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
+                                        self.bot.sendMessage(fromId, 'No has introducido un usuario correcto.');
                                     }
                                     user.setCurrentState(username, null, null);
                                     break;
@@ -276,7 +286,7 @@ var botTelegram = {
                                 case 1:
                                     var nUser = strArray[0];
                                     user.newUser(nUser);
-                                    bot.sendMessage(fromId, "Usuario @" + nUser + " añadido");
+                                    self.bot.sendMessage(fromId, "Usuario @" + nUser + " añadido");
                                     config.saveUsers();
                                     user.setCurrentState(username, null, null);
                                     break;
@@ -299,15 +309,15 @@ var botTelegram = {
                                     if (pass.checkPass(password)) {
                                         password = pass.setPassword(password,
                                             user.getUserProperties(username, {aux: null}).aux);
-                                        self.sayPass(fromId, password);
+                                        sayPass(fromId, password);
                                         user.editUser(username, {isAdmin: true});
                                         user.setCurrentState(username, null, null);
                                         pass.regUser(username);
                                     } else {
-                                        bot.sendMessage(fromId, "La contraseña no es válida." +
+                                        self.bot.sendMessage(fromId, "La contraseña no es válida." +
                                             "\nLa contraseña debe ser un PIN de cuatro números." +
                                             "\nPor ejemplo: 1234");
-                                        self.askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
+                                        askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
                                     }
                                     break;
                             }
@@ -318,10 +328,10 @@ var botTelegram = {
                                     var password = strArray[0];
                                     if(pass.isPassword(password,
                                             user.getUserProperties(username, {aux:null}).aux)) {
-                                        bot.sendMessage(fromId, 'Contraseña correcta');
+                                        self.bot.sendMessage(fromId, 'Contraseña correcta');
                                         pass.regUser(username);
                                     } else {
-                                        bot.sendMessage(fromId, 'Contraseña incorrecta')
+                                        self.bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }
                                     user.setCurrentState(username, null, null);
                                     break;
@@ -358,51 +368,48 @@ var botTelegram = {
                             }
                             break;
                         default:
-                            bot.sendMessage(fromId, "No has ejecutado una acción");
+                            self.bot.sendMessage(fromId, "No has ejecutado una acción");
                             break
                     }
                 }
             } else {
-                bot.sendMessage(fromId, "Usted no es un usuario autorizado, " +
+                self.bot.sendMessage(fromId, "Usted no es un usuario autorizado, " +
                     "contacte con el administrador." +
                     "\n Su id es " + fromId);
             }
         });
-    },
-    talk: function (chatId, msg) {
-        bot.sendMessage(chatId, msg);
-    },
-    askPass: function (chatId, key) {
-        var options = {
-            reply_markup: {
-                inline_keyboard: [[{
-                    text: 'Editar',
-                    callback_data: 'password_key'
-                }]]
-            }
-        };
-        setTimeout(function() {
-            bot.sendMessage(chatId, 'Introduzca su contraseña sumandole a cada cifra su ' +
-                'dígito correspondiente de la key' +
-                '\nEjemplo:' +
-                '\nContraseña: 1254' +
-                '\nKey: 7 5 8 9' +
-                '\nSolución: 8733');
-        }, 200);
-        setTimeout(function () {
-            bot.sendMessage(chatId, 'Key: ' + key, options);
-        },300);
-    },
-    sayPass: function (chatId, pass) {
-        var options = {
-            reply_markup: {
-                inline_keyboard: [[{
-                    text: 'Editar',
-                    callback_data: 'password_key'
-                }]]
-            }
-        };
-        bot.sendMessage(chatId, 'Su contraseña es: ' + pass, options);
+        function askPass (chatId, key) {
+            var options = {
+                reply_markup: {
+                    inline_keyboard: [[{
+                        text: 'Editar',
+                        callback_data: 'password_key'
+                    }]]
+                }
+            };
+            setTimeout(function() {
+                self.bot.sendMessage(chatId, 'Introduzca su contraseña sumandole a cada cifra su ' +
+                    'dígito correspondiente de la key' +
+                    '\nEjemplo:' +
+                    '\nContraseña: 1254' +
+                    '\nKey: 7 5 8 9' +
+                    '\nSolución: 8733');
+            }, 200);
+            setTimeout(function () {
+                self.bot.sendMessage(chatId, 'Key: ' + key, options);
+            },300);
+        }
+        function sayPass(chatId, pass) {
+            var options = {
+                reply_markup: {
+                    inline_keyboard: [[{
+                        text: 'Editar',
+                        callback_data: 'password_key'
+                    }]]
+                }
+            };
+            self.bot.sendMessage(chatId, 'Su contraseña es: ' + pass, options);
+        }
     }
 };
 

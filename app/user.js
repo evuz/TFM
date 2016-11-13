@@ -1,3 +1,5 @@
+var utils = require('../helpers/utils');
+
 var actions = {
     start: "start",
     password: "password",
@@ -35,7 +37,7 @@ var user = {
                     var t = (Date.now() - reg)*1000;
                     if (t > (self.timeProv*1000)) {
                         delete self.users[u];
-                        // Tiene que escribir en el CSV la nueva configuración
+                        utils.saveUsers();
                     }
                 }
             }
