@@ -1,7 +1,7 @@
 var user = require('./user');
 
 var actions = {
-    addUser: "addUser",
+    addUser: "addMember",
     addAdmin: "addAdmin",
     rmAdmin: "rmAdmin",
     addUsersCSV: "addUsersCSV",

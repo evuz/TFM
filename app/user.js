@@ -2,6 +2,7 @@ var utils = require('../helpers/utils');
 
 var actions = {
     start: "start",
+    admin: "admin",
     password: "password",
     addUserTemp: "addUser",
     server: "server",
@@ -17,6 +18,7 @@ var user = {
      *      name:
      *      mac:
      *      isAdmin:
+     *      adminReg:
      *      registered:
      *      atHome:
      *      aux:
@@ -52,7 +54,7 @@ var user = {
     },
     newUser: function (username) {
         this.users[username] = {id: null, name: null, mac: null, isAdmin: false,
-            registered: false, add: null, atHome:null, aux: null,
+            adminReg: false, registered: false, add: null, atHome:null, aux: null,
             currentState: {action: null, state: null}};
     },
     editUser: function (username, p) {

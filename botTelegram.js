@@ -59,20 +59,18 @@ var botTelegram = {
             var isAction = strArray[0].substring(0, 1) == '/';
 
             if(!config.initConfig) {
-                // bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
-                //     "usted va a ser el usuario administrador.\n" +
-                //     "Por favor, introduzca la contraseña de administrador.");
-                // user.newUser(username);
-                // user.setCurrentState(username, , user.getAction('start'));
                 var key = pass.generatePass();
                 bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
                     "usted va a ser el usuario administrador.\n" +
-                    "Por favor, introduzca la contraseña." +
-                    "\nEsta contraseña debe ser un PIN de cuatro números");
-                askPass(fromId,key);
+                    "Por favor, introduzca la contraseña de administrador.");
+                // bot.sendMessage(fromId, "Este es el primer inicio del bot, " +
+                //     "usted va a ser el usuario administrador.\n" +
+                //     "Por favor, introduzca la contraseña." +
+                //     "\nEsta contraseña debe ser un PIN de cuatro números");
+                askPass(fromId,key, true);
                 user.newUser(username);
                 user.editUser(username,{aux: key});
-                user.setCurrentState(username, 2, user.getAction('start'));
+                user.setCurrentState(username, 1, user.getAction('start'));
                 config.initConfig = true;
                 // config.saveUsers();
             }else if (user.isUser(username)) {
@@ -81,7 +79,7 @@ var botTelegram = {
                 if (isAction) {
                     var action = strArray[0].split('/')[1];
                     // Acciones del administrador
-                    if (admin.isAdmin(username) &&
+                    if (pass.isAdminReg(username) &&
                         admin.isAction(action)) {
                         switch (action) {
                             case admin.getAction('addUser'):
@@ -124,6 +122,16 @@ var botTelegram = {
                             bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
                                 "para comenzar introduzca su nombre");
                             user.setCurrentState(username, 3, user.getAction('start'));
+                        } else if (action == user.getAction('admin')) {
+                            if(admin.isAdmin(username)) {
+                                var key = pass.generatePass();
+                                askPass(fromId, key, true);
+                                user.editUser(username,{aux: key});
+                                user.setCurrentState(username, 1, action);
+                            } else {
+                                bot.sendMessage(fromId, "Lo siento, usted no tiene permisos" +
+                                    " de administrador");
+                            }
                         } else if (action == user.getAction('password')) {
                             var key = pass.generatePass();
                             askPass(fromId, key);
@@ -191,13 +199,24 @@ var botTelegram = {
                         case user.getAction('start'):
                             switch (currentState.state) {
                                 case 1:
-                                    var password = strArray[0];
-                                    pass.setAdminPasswd(password);
-                                    admin.setAdmin(username, true);
-                                    bot.sendMessage(fromId, "Contraseña de administrador establecida." +
-                                        "\n\nAhora introduzca la contraseña de usuario");
-                                    user.editUser(username, {isAdmin: true});
-                                    user.setCurrentState(username, 2, user.getAction('start'));
+                                    password = strArray[0];
+                                    if (pass.checkPass(password)) {
+                                        password = pass.setAdminPasswd(password,
+                                            user.getUserProperties(username, {aux: null}).aux);
+                                        sayPass(fromId, password);
+                                        setTimeout(function () {
+                                            var key = pass.generatePass();
+                                            askPass(fromId, key);
+                                            user.editUser(username,{aux: key});
+                                        },100);
+                                        user.setCurrentState(username, 2, user.getAction('start'));
+                                        pass.regUser(username);
+                                    } else {
+                                        bot.sendMessage(fromId, "La contraseña no es válida." +
+                                            "\nLa contraseña debe ser un PIN de cuatro números." +
+                                            "\nPor ejemplo: 1234");
+                                        askPass(fromId, user.getUserProperties(username, {aux: null}).aux);
+                                    }
                                     break;
                                 case 2:
                                     password = strArray[0];
@@ -326,6 +345,21 @@ var botTelegram = {
                                     break;
                             }
                             break;
+                        case user.getAction('admin'):
+                            switch (currentState.state) {
+                                case 1:
+                                    var password = strArray[0];
+                                    if(pass.isAdminPassword(password,
+                                            user.getUserProperties(username, {aux:null}).aux)) {
+                                        bot.sendMessage(fromId, 'Contraseña correcta');
+                                        pass.regAdmin(username);
+                                    } else {
+                                        bot.sendMessage(fromId, 'Contraseña incorrecta')
+                                    }
+                                    user.setCurrentState(username, null, null);
+                                    break;
+                            }
+                            break;
                         case user.getAction('password'):
                             switch (currentState.state) {
                                 case 1:
@@ -382,7 +416,8 @@ var botTelegram = {
                     "\n Su id es " + fromId);
             }
         });
-        function askPass (chatId, key) {
+        function askPass (chatId, key, admin) {
+            admin = admin || false;
             var options = {
                 reply_markup: {
                     inline_keyboard: [[{
@@ -391,9 +426,11 @@ var botTelegram = {
                     }]]
                 }
             };
+            var strAdmin = "";
+            if (admin) strAdmin = 'de administrador';
             setTimeout(function() {
-                bot.sendMessage(chatId, 'Introduzca su contraseña sumandole a cada cifra su ' +
-                    'dígito correspondiente de la key' +
+                bot.sendMessage(chatId, 'Introduzca su contraseña ' + strAdmin + ' sumandole a ' +
+                    'cada cifra su dígito correspondiente de la key' +
                     '\nEjemplo:' +
                     '\nContraseña: 1254' +
                     '\nKey: 7 5 8 9' +

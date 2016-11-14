@@ -3,7 +3,10 @@ var config = require("./config");
 
 var password = {
     init: function (t) {
-        setInterval(this.checkUserTime, t*60*1000);
+        setInterval(function() {
+            this.checkUserTime();
+            this.checkAdminTime();
+        }, t*60*1000);
     },
     checkUserTime: function() {
         var users = user.users;
@@ -21,16 +24,47 @@ var password = {
             }
         }
     },
+    checkAdminTime: function() {
+        var users = user.users;
+
+        for (var u in users) {
+            var us = users[u];
+            if(!us.adminReg) {
+                continue;
+            }
+
+            var oneHour = 60*60*1000;
+            var time = Date.now() - us.adminReg;
+            if (oneHour < time) {
+                this.UnRegAdmin(u);
+            }
+        }
+    },
     regUser: function (username) {
         user.editUser(username, {registered: Date.now()})
     },
     UnRegUser: function (username) {
         user.editUser(username, {registered: false})
     },
+    regAdmin: function (username) {
+        user.editUser(username, {adminReg: Date.now()})
+    },
+    UnRegAdmin: function (username) {
+        user.editUser(username, {adminReg: false})
+    },
     isReg: function(username) {
         var u = user.users[username];
 
         if (u.registered) {
+            return true
+        } else {
+            return false;
+        }
+    },
+    isAdminReg: function(username) {
+        var u = user.users[username];
+
+        if (u.adminReg) {
             return true
         } else {
             return false;
@@ -54,14 +88,22 @@ var password = {
         config.saveConfig();
         return pass;
     },
-    setAdminPasswd: function (newPass) {
-        config.adminPass = newPass;
+    setAdminPasswd: function (newPass, key) {
+        var pass = this.decodePass(newPass, key);
+
+        config.adminPass = pass;
         config.saveConfig();
+        return pass;
     },
     isPassword: function (pass, key) {
         var decPass = this.decodePass(pass,key);
 
         return decPass == config.passwd;
+    },
+    isAdminPassword: function (pass, key) {
+        var decPass = this.decodePass(pass,key);
+
+        return decPass == config.adminPass;
     },
     generatePass: function () {
         var length = 4;
