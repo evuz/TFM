@@ -6,7 +6,8 @@ var actions = {
     addUserTemp: "addUser",
     server: "server",
     alarmAct: "alarmAct",
-    alarmDes: "alarmDes"
+    alarmDes: "alarmDes",
+    getTemp: "temp"
 };
 
 var user = {
@@ -28,7 +29,7 @@ var user = {
      */
     users: {},
     timeProv: 2,
-    init: function () {
+    init: function (T) {
         var self = this;
         setInterval(function () {
             for(var u in self.users) {
@@ -37,16 +38,17 @@ var user = {
                     var t = (Date.now() - reg)*1000;
                     if (t > (self.timeProv*1000)) {
                         delete self.users[u];
-                        utils.saveUsers();
+                        // TODO: Eliminar el usuario del CSV
+                        // utils.saveUsers();
                     }
                 }
             }
-            console.log('Usuarios');
+            // console.log('Usuarios');
             for(var u in self.users) {
-                console.log('@' + u);
+                // console.log('@' + u);
             }
-            console.log('\n');
-        }, 15*1000);
+            // console.log('\n');
+        }, T*60*1000);
     },
     newUser: function (username) {
         this.users[username] = {id: null, name: null, mac: null, isAdmin: false,

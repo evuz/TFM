@@ -1,4 +1,5 @@
 var csv = require('./../helpers/csv');
+var weather = require('./weather');
 var user = require('./user');
 
 var config = {
@@ -21,10 +22,11 @@ var config = {
                 self.passwd = data[0].passwd;
             if (data[0].adminPass)
                 self.adminPass = data[0].adminPass;
+            if (data[0].lat && data[0].long)
+                weather.setCoordinates(data[0].lat, data[0].long);
         });
     },
     loadUsers: function (filename) {
-        var self = this;
         csv.readCSV(filename, function (data) {
             for(var i = 0; i < data.length; i++) {
                 user.newUser(data[i].username);
@@ -45,8 +47,9 @@ var config = {
     },
     saveConfig: function () {
         var data = [];
+        var coordiantes = weather.getCoordiantes();
         data[0] = {initConfig: this.initConfig, passwd: this.passwd,
-        adminPass: this.adminPass};
+        adminPass: this.adminPass, lat: coordiantes[0], long: coordiantes[1]};
         csv.writeCSV("initConfig.csv", data);
     },
     saveUsers: function () {

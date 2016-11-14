@@ -5,7 +5,7 @@ var admin = require('./admin');
 var date = require('../helpers/date');
 var botTalk = require('../helpers/utils');
 var csv = require('../helpers/csv');
-var alarm = require('../alarm');
+var alarm = require('./alarm');
 
 var whoIs = {
     advise: false,

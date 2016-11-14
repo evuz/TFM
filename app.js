@@ -4,11 +4,17 @@
 var botTelegram = require("./botTelegram");
 var pass = require("./app/password");
 var config = require("./app/config");
+var user = require("./app/user");
 var whoIs = require("./app/whoIs");
+var weather = require("./app/weather");
 // var alarm = require("./alarm");
 //alarm.initAlarm(0.25);
 
-whoIs.init(0.15);
-pass.init(10);
 config.loadInitConfig();
-botTelegram.init();
+setTimeout(function () {
+    // whoIs.init(0.15);
+    weather.init(60);
+    user.init(1);
+    pass.init(10);
+    botTelegram.init();
+}, 5*1000);
