@@ -18,11 +18,13 @@ var domotic = {
         gpio.setup(13, gpio.DIR_IN);
         gpio.setup(15, gpio.DIR_IN);
     },
-    writePin: function (pinN, value) {
+    writePin: function (pinN, value, callback) {
+        var cb = callback || function () {};
         var pin = pinName[pinN];
         gpio.write(pin, value, function(err) {
             if (err) throw err;
             console.log('Written to pin');
+            cb();
         });
     }
 };

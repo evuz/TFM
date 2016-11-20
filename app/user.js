@@ -9,12 +9,8 @@ var actions = {
     alarmAct: "alarmAct",
     alarmDes: "alarmDes",
     getTemp: "temp",
-    peephole: "mirilla",
     hallLightOn: "salonLuzOn",
-    hallLightOff: "salonLuzOff",
-    hallBlind: "salonPersiana",
-    gardenDoor: "",
-    gardenAwning:""
+    hallLightOff: "salonLuzOff"
 };
 
 var user = {

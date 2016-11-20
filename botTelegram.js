@@ -8,6 +8,7 @@ var config = require("./app/config");
 var pass = require("./app/password");
 var alarm = require("./app/alarm");
 var weather = require("./app/weather");
+var domotic = require("./app/domotic");
 
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
@@ -116,8 +117,8 @@ var botTelegram = {
                                 });
                                 break;
                         }
-                        // Acciones de los usuarios
                     } else if (user.isAction(action)) {
+                        // Acciones de los usuarios
                         if (action == user.getAction('start')) {
                             bot.sendMessage(fromId, "Vamos a configurar la cuenta, " +
                                 "para comenzar introduzca su nombre");
@@ -172,12 +173,22 @@ var botTelegram = {
                                         '\nPuedes encontrar tu alias en Ajustes.');
                                     user.setCurrentState(username, 2, admin.getAction('addUser'));
                                     break;
-                                default:
-                                    break;
                                 case user.getAction('getTemp'):
                                     var temp = weather.getTemp().toFixed(2);
                                     bot.sendMessage(fromId, 'La temperatura en casa es de ' +
                                         temp + 'ºC');
+                                    break;
+                                case user.getAction('hallLightOn'):
+                                    domotic.writePin('hallLight', true, function () {
+                                        bot.sendMessage(fromId, 'Luz del salón encendida');
+                                    });
+                                    break;
+                                case user.getAction('hallLightOff'):
+                                    domotic.writePin('hallLight', false, function () {
+                                        bot.sendMessage(fromId, 'Luz del salón apagada');
+                                    });
+                                    break;
+                                default:
                                     break;
                             }
                         } else {
