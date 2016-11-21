@@ -12,6 +12,8 @@
     "node-telegram-bot-api":"",
     "fast-csv":"",
     "openweather-node": "",
-    "rpi-gpio":""
+    "rpi-gpio":"",
+    "v4l2camera":"",
+    "pngjs":""
   }
 }
