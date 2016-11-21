@@ -19,10 +19,10 @@ var domotic = {
     init: function () {
         // for(var pin in pinName)
         gpio.setup(7, gpio.DIR_OUT);
-        gpio.setup(19, gpio.DIR_OUT);
         gpio.setup(21, gpio.DIR_OUT);
-        gpio.setup(11, gpio.DIR_IN, gpio.EDGE_RISING);
+        gpio.setup(11, gpio.DIR_OUT);
         gpio.setup(13, gpio.DIR_IN, gpio.EDGE_RISING);
+        gpio.setup(15, gpio.DIR_IN, gpio.EDGE_RISING);
         gpio.setup(23, gpio.DIR_IN, gpio.EDGE_RISING);
 
         gpio.on('change', function(channel) {
