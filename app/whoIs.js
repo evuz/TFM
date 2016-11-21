@@ -3,7 +3,7 @@ var arp = require("../helpers/macDiscover");
 var user = require('./user');
 var admin = require('./admin');
 var date = require('../helpers/date');
-var botTalk = require('../helpers/utils');
+var botTelegram = require('../botTelegram');
 var csv = require('../helpers/csv');
 var alarm = require('./alarm');
 
@@ -46,7 +46,7 @@ var whoIs = {
                     // console.log('No hay nadie en casa!');
                     var admins = admin.getAdminId();
                     for (var adm in admins) {
-                        botTalk.talk(admins[adm], 'No hay nadie en casa.' +
+                        botTelegram.talk(admins[adm], 'No hay nadie en casa.' +
                             '\n¿Desea activar la alarma?' +
                             '\n/' + user.getAction('alarmAct'));
                     }
@@ -54,7 +54,7 @@ var whoIs = {
                 } else if(n && alarm.isActive()) {
                     for(var u in nWhoAtHome) {
                         if(nWhoAtHome[u].atHome) {
-                            botTalk.talk(nWhoAtHome[u].id, "La alarma está activa." +
+                            botTelegram.talk(nWhoAtHome[u].id, "La alarma está activa." +
                                 "\n¿Quieres desactivarla?" +
                                 '\n/' + user.getAction('alarmDes'));
                         }

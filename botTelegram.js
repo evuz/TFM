@@ -462,6 +462,12 @@ var botTelegram = {
             };
             self.bot.sendMessage(chatId, 'Su contraseña es: ' + pass, options);
         }
+    },
+    talk: function (chatId, msg) {
+        bot.sendMessage(chatId, msg);
+    },
+    photo: function (chatId, filename) {
+        bot.sendPhoto(chatId, filename);
     }
 };
 

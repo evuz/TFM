@@ -1,7 +1,7 @@
 var gpio = require('rpi-gpio');
 var admin = require('./admin');
 var photo = require('../helpers/photo');
-var botTalk = require('../helpers/utils');
+var botTelegram = require('../botTelegram');
 
 var filename = "peepholder.png";
 var busy = false;
@@ -39,7 +39,7 @@ var domotic = {
                         photo.takePhoto(filename, function () {
                             var admins = admin.getAdminId();
                             for (var adm in admins) {
-                                botTalk.photo(admins[adm], filename);
+                                botTelegram.photo(admins[adm], filename);
                             }
                             busy = false;
                         });
