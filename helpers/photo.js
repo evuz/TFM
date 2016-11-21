@@ -10,8 +10,8 @@ var takePhoto = function (filename, callback) {
     cam.configSet({width: 352, height: 288});
     cam.start();
     times(6, cam.capture.bind(cam), function () {
-        saveAsPng(cam.toRGB(), cam.width, cam.height, filename + ".png", function (filename) {
-            callback(filename);
+        saveAsPng(cam.toRGB(), cam.width, cam.height, filename, function () {
+            callback();
         });
         cam.stop();
     });
