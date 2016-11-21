@@ -4,6 +4,7 @@ var photo = require('../helpers/photo');
 var botTalk = require('../helpers/utils');
 
 var filename = "peepholder.png";
+var busy = false;
 
 var pinName = {
     hallLight: 7,
@@ -11,7 +12,7 @@ var pinName = {
     doorDown: 11,
     doorUp: 13,
     bell: 15,
-    alarmDetect: 19
+    alarmDetect: 23
 };
 
 var domotic = {
@@ -22,23 +23,30 @@ var domotic = {
         gpio.setup(21, gpio.DIR_OUT);
         gpio.setup(11, gpio.DIR_IN, gpio.EDGE_RISING);
         gpio.setup(13, gpio.DIR_IN, gpio.EDGE_RISING);
-        gpio.setup(15, gpio.DIR_IN, gpio.EDGE_RISING);
+        gpio.setup(23, gpio.DIR_IN, gpio.EDGE_RISING);
 
-        gpio.on('change', function(channel, value) {
+        gpio.on('change', function(channel) {
             switch (channel) {
                 case pinName['doorDown']:
+                    console.log(channel);
                     break;
                 case pinName['doorUp']:
+                    console.log(channel);
                     break;
                 case pinName['bell']:
-                    photo.takePhoto(filename, function () {
-                        var admins = admin.getAdminId();
-                        for (var adm in admins) {
-                            botTalk.photo(admins[adm], filename);
-                        }
-                    });
+                    if(!busy) {
+                        busy = true;
+                        photo.takePhoto(filename, function () {
+                            var admins = admin.getAdminId();
+                            for (var adm in admins) {
+                                botTalk.photo(admins[adm], filename);
+                            }
+                            busy = false;
+                        });
+                    }
                     break;
                 case pinName['alarmDetect']:
+                    console.log(channel);
                     break;
             }
         });
