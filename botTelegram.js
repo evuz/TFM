@@ -188,6 +188,14 @@ var botTelegram = {
                                         bot.sendMessage(fromId, 'Luz del salón apagada');
                                     });
                                     break;
+                                case user.getAction('peepHolderOn'):
+                                    domotic.peepHolderState(true);
+                                    bot.sendMessage(fromId, 'Función mirilla activada');
+                                    break;
+                                case user.getAction('peepHolderOff'):
+                                    domotic.peepHolderState(false);
+                                    bot.sendMessage(fromId, 'Función mirilla desactivada');
+                                    break;
                                 default:
                                     break;
                             }
@@ -409,7 +417,7 @@ var botTelegram = {
                                             user.getUserProperties(username, {aux:null}).aux)) {
                                         bot.sendMessage(fromId, 'La alarma se ha desactivado');
                                         alarm.deactivate();
-					domotic.writePin('alarmAlert', false);
+					                    domotic.writePin('alarmAlert', false);
                                     } else {
                                         bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }

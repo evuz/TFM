@@ -10,7 +10,9 @@ var actions = {
     alarmDes: "alarmDes",
     getTemp: "temp",
     hallLightOn: "salonLuzOn",
-    hallLightOff: "salonLuzOff"
+    hallLightOff: "salonLuzOff",
+    peepHolderOn: "mirillaOn",
+    peepHolderOff: "mirillaOff"
 };
 
 var user = {

@@ -13,6 +13,8 @@ var pinName = {
     alarmDetect: 23
 };
 
+var peepHolderEn = true;
+
 var domotic = {
     photo: false,
     alarm: false,
@@ -35,7 +37,7 @@ var domotic = {
                     console.log(channel);
                     break;
                 case pinName['bell']:
-                    if(!self.photo)
+                    if(!self.photo && peepHolderEn)
                         self.photo = true;
                     break;
                 case pinName['alarmDetect']:
@@ -53,6 +55,9 @@ var domotic = {
             console.log('Written to pin');
             cb();
         });
+    },
+    peepHolderState: function (state) {
+        peepHolderEn = state;
     }
 };
 
