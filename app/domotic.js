@@ -17,6 +17,7 @@ var domotic = {
     photo: false,
     alarm: false,
     init: function () {
+        var self = this;
         // for(var pin in pinName)
         gpio.setup(7, gpio.DIR_OUT);
         gpio.setup(21, gpio.DIR_OUT);
@@ -34,12 +35,12 @@ var domotic = {
                     console.log(channel);
                     break;
                 case pinName['bell']:
-                    if(!this.photo)
-                        this.photo = true;
+                    if(!self.photo)
+                        self.photo = true;
                     break;
                 case pinName['alarmDetect']:
-                    if(!this.alarm)
-                        this.alarm = true;
+                    if(!self.alarm)
+                        self.alarm = true;
                     break;
             }
         });

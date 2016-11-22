@@ -13,7 +13,7 @@ var domotic = require("./app/domotic");
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
 var server = require("./helpers/server");
-var photo = require('../helpers/photo');
+var photo = require("./helpers/photo");
 
 var bot;
 var botTelegram = {
@@ -468,18 +468,45 @@ var botTelegram = {
     },
     wathDog: function (T) {
         var filename = "peepholder.png";
+        var opPhoto = false;
+        var opAlarm = false;
         setInterval(function () {
             if(domotic.photo) {
-                photo.takePhoto(filename, function () {
-                    var admins = admin.getAdminId();
-                    for (var adm in admins) {
-                        bot.sendPhoto(admins[adm], filename);
-                        domotic.photo = false;
-                    }
-                })
+                domotic.photo = false;
+                if (!opPhoto) {
+                    opPhoto = true;
+                    photo.takePhoto(filename, function () {
+                        var admins = admin.getAdminId();
+                        for (var adm in admins) {
+                            bot.sendPhoto(admins[adm], filename);
+                        }
+                        opPhoto = false;
+                    })
+                }
             }
             if (domotic.alarm) {
-
+                domotic.alarm = false;
+                if(alarm.isActive()) {
+                    if(!opAlarm) {
+                        opAlarm = true;
+                        var blinkID = setInterval(function () {
+                            var state = false;
+                            if (state) {
+                                domotic.writePin("alarmAlert", state);
+                                state = false;
+                            } else {
+                                domotic.writePin("alarmAlert", state);
+                                state = true;
+                            }
+                        }, 1000);
+                        setTimeout(function () {
+                            clearInterval(blinkID);
+                            domotic.writePin("alarmAlert", true);
+                        }, 15000);
+                    }
+                } else {
+                    opAlarm = false;
+                }
             }
         }, T*1000);
     }
