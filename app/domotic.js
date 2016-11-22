@@ -1,9 +1,7 @@
 var gpio = require('rpi-gpio');
 var admin = require('./admin');
-var photo = require('../helpers/photo');
 var botTelegram = require('../botTelegram');
 
-var filename = "peepholder.png";
 var busy = false;
 
 var pinName = {
@@ -16,6 +14,8 @@ var pinName = {
 };
 
 var domotic = {
+    photo: false,
+    alarm: false,
     init: function () {
         // for(var pin in pinName)
         gpio.setup(7, gpio.DIR_OUT);
@@ -34,19 +34,12 @@ var domotic = {
                     console.log(channel);
                     break;
                 case pinName['bell']:
-                    if(!busy) {
-                        busy = true;
-                        photo.takePhoto(filename, function () {
-                            var admins = admin.getAdminId();
-                            for (var adm in admins) {
-                                botTelegram.photo(admins[adm], filename);
-                            }
-                            busy = false;
-                        });
-                    }
+                    if(!this.photo)
+                        this.photo = true;
                     break;
                 case pinName['alarmDetect']:
-                    console.log(channel);
+                    if(!this.alarm)
+                        this.alarm = true;
                     break;
             }
         });

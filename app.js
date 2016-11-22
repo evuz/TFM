@@ -13,10 +13,11 @@ var domotic = require("./app/domotic");
 
 config.loadInitConfig();
 setTimeout(function () {
-    // whoIs.init(0.15);
+    whoIs.init(0.15);
     domotic.init();
     weather.init(60);
     user.init(1);
     pass.init(10);
+    botTelegram.wathDog(1);
     botTelegram.init();
 }, 5*1000);

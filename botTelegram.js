@@ -13,7 +13,7 @@ var domotic = require("./app/domotic");
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
 var server = require("./helpers/server");
-// var photoCam = require("./helpers/photo");
+var photo = require('../helpers/photo');
 
 var bot;
 var botTelegram = {
@@ -466,8 +466,22 @@ var botTelegram = {
     talk: function (chatId, msg) {
         bot.sendMessage(chatId, msg);
     },
-    photo: function (chatId, filename) {
-        bot.sendPhoto(chatId, filename);
+    wathDog: function (T) {
+        var filename = "peepholder.png";
+        setInterval(function () {
+            if(domotic.photo) {
+                photo.takePhoto(filename, function () {
+                    var admins = admin.getAdminId();
+                    for (var adm in admins) {
+                        bot.sendPhoto(admins[adm], filename);
+                        domotic.photo = false;
+                    }
+                })
+            }
+            if (domotic.alarm) {
+
+            }
+        }, T*1000);
     }
 };
 
