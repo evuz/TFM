@@ -141,7 +141,7 @@ var botTelegram = {
                         } else if (action == user.getAction('alarmAct')) {
                             if(!alarm.isActive()) {
                                 var key = pass.generatePass();
-                                self.askPass(fromId, key);
+                                askPass(fromId, key);
                                 user.editUser(username,{aux: key});
                                 user.setCurrentState(username, 1, action);
                             } else {
@@ -150,7 +150,7 @@ var botTelegram = {
                         } else if (action == user.getAction('alarmDes')) {
                             if(alarm.isActive()) {
                                 var key = pass.generatePass();
-                                self.askPass(fromId, key);
+                                askPass(fromId, key);
                                 user.editUser(username, {aux: key});
                                 user.setCurrentState(username, 1, action);
                             } else {
@@ -409,6 +409,7 @@ var botTelegram = {
                                             user.getUserProperties(username, {aux:null}).aux)) {
                                         bot.sendMessage(fromId, 'La alarma se ha desactivado');
                                         alarm.deactivate();
+					domotic.writePin('alarmAlert', false);
                                     } else {
                                         bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }
@@ -485,13 +486,21 @@ var botTelegram = {
                 }
             }
             if (domotic.alarm) {
+		console.log('alarm');		
                 domotic.alarm = false;
                 if(alarm.isActive()) {
+			console.log('isActive');
                     if(!opAlarm) {
+			console.log('opAlarm');
+			var state = false;
                         opAlarm = true;
                         var blinkID = setInterval(function () {
-                            var state = false;
-                            if (state) {
+                            if(!alarm.isActive()) {
+				clearInterval(blinkID);
+				opAlarm = false;
+				return;
+			    }
+			    if (state) {
                                 domotic.writePin("alarmAlert", state);
                                 state = false;
                             } else {
@@ -500,8 +509,14 @@ var botTelegram = {
                             }
                         }, 1000);
                         setTimeout(function () {
-                            clearInterval(blinkID);
-                            domotic.writePin("alarmAlert", true);
+                            var act = alarm.isActive();
+			    console.log(act);
+			    if(act) {
+				console.log('setTimeout');
+				clearInterval(blinkID);
+				domotic.writePin("alarmAlert", true);
+			    }
+			    opAlarm = false;				    
                         }, 15000);
                     }
                 } else {
