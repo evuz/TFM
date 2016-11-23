@@ -98,13 +98,14 @@ var botTelegram = {
                                     ' eliminarle los permisos de administrador');
                                 user.setCurrentState(username, 1, admin.getAction('rmAdmin'));
                                 break;
-                            case admin.getAction('addUsersCSV'):
-                                break;
+                            // case admin.getAction('addUsersCSV'):
+                            //     break;
                             case admin.getAction('changePass'):
                                 bot.sendMessage(fromId, 'Introduzca la contraseña nueva');
                                 user.setCurrentState(username, 1, admin.getAction('changePass'));
                                 break;
-                            case admin.getAction('whoAtHome'):
+                            case user.getAction('help'):
+                                bot.sendMessage(fromId, admin.help());
                                 break;
                             case admin.getAction('showReg'):
                                 csv.readCSV('reg.csv', function (reg) {
@@ -172,6 +173,9 @@ var botTelegram = {
                                     bot.sendMessage(fromId, 'Introduzca el alias del usuario sin @.' +
                                         '\nPuedes encontrar tu alias en Ajustes.');
                                     user.setCurrentState(username, 2, admin.getAction('addUser'));
+                                    break;
+                                case user.getAction('help'):
+                                    bot.sendMessage(fromId, user.help());
                                     break;
                                 case user.getAction('getTemp'):
                                     var temp = weather.getTemp().toFixed(2);
@@ -372,6 +376,7 @@ var botTelegram = {
                                             user.getUserProperties(username, {aux:null}).aux)) {
                                         bot.sendMessage(fromId, 'Contraseña correcta');
                                         pass.regAdmin(username);
+                                        pass.regUser(username);
                                     } else {
                                         bot.sendMessage(fromId, 'Contraseña incorrecta')
                                     }

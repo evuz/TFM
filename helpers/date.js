@@ -7,7 +7,7 @@ var date = {
     getDay: function () {
         var d = new Date();
         return  this.pad(d.getFullYear()) + '_' +
-                this.pad(d.getMonth()) + '_' + this.pad(d.getDay());
+                this.pad(d.getMonth() + 1) + '_' + this.pad(d.getDate());
     },
     pad: function (n) {
         if (n < 10) {

@@ -1,18 +1,19 @@
 var utils = require('../helpers/utils');
 
 var actions = {
-    start: "start",
-    admin: "admin",
-    password: "password",
-    addUserTemp: "addUser",
-    server: "server",
-    alarmAct: "alarmAct",
-    alarmDes: "alarmDes",
-    getTemp: "temp",
-    hallLightOn: "salonLuzOn",
-    hallLightOff: "salonLuzOff",
-    peepHolderOn: "mirillaOn",
-    peepHolderOff: "mirillaOff"
+    help: {action: "help", description: "Muestra todas las acciones del bot"},
+    start: {action: "start", description: ""},
+    admin: {action: "admin", description: ""},
+    password: {action: "password", description: "Introduce la contraseña de usuario"},
+    addUserTemp: {action: "addUser", description: "Añade un usuario temporalmente"},
+    server: {action: "server", description: ""},
+    getTemp: {action: "temp", description: "Muestra la temperatura que hay en casa"},
+    alarmAct: {action: "alarmAct", description: "Activa la alarma"},
+    alarmDes: {action: "alarmDes", description: "Desactiva la alarma"},
+    hallLightOn: {action: "salonLuzOn", description: "Enciende la luz del salón"},
+    hallLightOff: {action: "salonLuzOff", description: "Apaga la luz del salón"},
+    peepHolderOn: {action: "mirillaOn", description: "Habilita la opción de mirilla (activo por defecto)"},
+    peepHolderOff: {action: "mirillaOff", description: "Deshabilita la opción de mirilla"}
 };
 
 var user = {
@@ -124,13 +125,22 @@ var user = {
     },
     isAction: function (p) {
         for(var action in actions) {
-            if (actions[action] == p)
+            if (actions[action].action == p)
                 return true;
         }
         return false;
     },
     getAction: function (p) {
-        return actions[p];
+        return actions[p].action;
+    },
+    help: function () {
+        var str = "Acciones de usuario: \n";
+        for(var action in actions) {
+            if(action == 'start' || action == 'admin'|| action == 'server') continue;
+            str += '/' + actions[action].action + " - " + actions[action].description + "\n";
+        }
+
+        return str;
     }
 };
 
