@@ -3,9 +3,10 @@ var config = require("./config");
 
 var password = {
     init: function (t) {
+        var self = this;
         setInterval(function() {
-            this.checkUserTime();
-            this.checkAdminTime();
+            self.checkUserTime();
+            self.checkAdminTime();
         }, t*60*1000);
     },
     checkUserTime: function() {
