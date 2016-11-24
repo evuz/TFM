@@ -1,3 +1,5 @@
 node_modules
 .idea
 *.png
+files/file*
+files/reg/20*
