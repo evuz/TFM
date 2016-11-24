@@ -1,6 +1,10 @@
 /**
  * Created by JGB on 9/09/16.
  */
+var fs = require("fs");
+var Speaker = require("speaker");
+var ogg = require("ogg");
+
 var TelegramBot = require('node-telegram-bot-api');
 var admin = require("./app/admin");
 var user = require("./app/user");
@@ -13,7 +17,7 @@ var domotic = require("./app/domotic");
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
 var server = require("./helpers/server");
-var photo = require("./helpers/photo");
+// var photo = require("./helpers/photo");
 
 var bot;
 var botTelegram = {
@@ -41,6 +45,19 @@ var botTelegram = {
         bot.on('location', function (msg) {
             weather.setCoordinates(msg.location.latitude, msg.location.longitude);
             config.saveConfig();
+        });
+
+        bot.on('voice', function (msg) {
+            var decoder = new ogg.Decoder();
+            var speaker = new Speaker({
+                channels: 1,
+                bitDepth: 32,
+                sampleRate: 48000
+            });
+            var link = bot.downloadFile(msg.voice.file_id, './files');
+            link.then(function (value) {
+                fs.createReadStream(value).pipe(decoder).pipe(speaker);
+            });
         });
 
         bot.on('callback_query', function onCallbackQuery(callbackQuery) {
