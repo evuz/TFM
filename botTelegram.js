@@ -56,7 +56,15 @@ var botTelegram = {
             });
             var link = bot.downloadFile(msg.voice.file_id, './files');
             link.then(function (value) {
-                fs.createReadStream(value).pipe(decoder).pipe(speaker);
+                var exec = require('child_process').exec;
+                exec('opusdec ' + value + ' ./files/file.wav', function (error, stdout) {
+                    console.log(stdout);
+                    if (error) throw error;
+                    exec('play ./files/file.wav', function (error, stdout, stderr) {
+                        console.log(stdout);
+                        if (error) throw error;
+                    });
+                });
             });
         });
 
