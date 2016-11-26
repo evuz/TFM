@@ -8,14 +8,16 @@ var user = require("./app/user");
 var whoIs = require("./app/whoIs");
 var weather = require("./app/weather");
 var domotic = require("./app/domotic");
+var server = require("./helpers/server");
 
 config.loadInitConfig();
 setTimeout(function () {
-    whoIs.init(1);
+    whoIs.init(0.25);
+    server.init(1200);
     domotic.init();
     weather.init(60);
     user.init(1);
     pass.init(10);
-    botTelegram.wathDog(1);
+    botTelegram.watchDog(1);
     botTelegram.init();
 }, 5*1000);

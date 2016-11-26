@@ -2,8 +2,6 @@
  * Created by JGB on 9/09/16.
  */
 var fs = require("fs");
-var Speaker = require("speaker");
-var ogg = require("ogg");
 
 var TelegramBot = require('node-telegram-bot-api');
 var admin = require("./app/admin");
@@ -17,13 +15,13 @@ var domotic = require("./app/domotic");
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
 var server = require("./helpers/server");
-// var photo = require("./helpers/photo");
+var photo = require("./helpers/photo");
 
+var ip = "192.168.1.101";
 var bot;
 var botTelegram = {
     init: function () {
         var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
-        var self = this;
 
         bot = new TelegramBot(token, {polling: true});
 
@@ -48,12 +46,6 @@ var botTelegram = {
         });
 
         bot.on('voice', function (msg) {
-            var decoder = new ogg.Decoder();
-            var speaker = new Speaker({
-                channels: 1,
-                bitDepth: 32,
-                sampleRate: 48000
-            });
             var link = bot.downloadFile(msg.voice.file_id, './files');
             link.then(function (value) {
                 var exec = require('child_process').exec;
@@ -184,15 +176,24 @@ var botTelegram = {
                             }
                         } else if (pass.isReg(username)) {
                             switch (action) {
-                                case user.getAction('server'):
-                                    var port = strArray[1];
-                                    if (port) {
-                                        var s = server.iniciar(port);
-                                        bot.sendMessage(fromId, s);
-                                    } else {
-                                        bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
-                                            "/server <port>");
-                                    }
+                                // case user.getAction('server'):
+                                //     // var port = strArray[1];
+                                //     // if (port) {
+                                //     //     var s = server.iniciar(port);
+                                //     //     bot.sendMessage(fromId, s);
+                                //     // } else {
+                                //     //     bot.sendMessage(fromId, "No has introducido el formato correcto:\n" +
+                                //     //         "/server <port>");
+                                //     // }
+                                //     bot.sendMessage(fromId, "192.168.1.101:1200");
+                                //     server.setCatchIP(1,
+                                //         {username:username, id:fromId});
+                                //     break;
+                                case user.getAction('myMAC'):
+                                    bot.sendMessage(fromId, "Acceda a este enlace" +
+                                        ip + "1200");
+                                        server.setCatchIP(1,
+                                            {username:username, id:fromId});
                                     break;
                                 case user.getAction('addUserTemp'):
                                     bot.sendMessage(fromId, 'Introduzca el alias del usuario sin @.' +
@@ -289,8 +290,10 @@ var botTelegram = {
                                     var name = msg.text;
                                     user.editUser(username, {id: fromId, name: name});
                                     bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
-                                        "introduce tu MAC" +
+                                        // TODO: enviar IP de forma automática
+                                        "acceda a este enlace: " + ip + "1200" +
                                         "\n Si no estás en tu red, introduce 'fin'");
+                                    server.setCatchIP(1, {username:username, id:fromId});
                                     user.setCurrentState(username, 4, user.getAction('start'));
                                     break;
                                 case 4:
@@ -298,16 +301,9 @@ var botTelegram = {
                                     if (mac == "fin") {
                                         bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario" +
                                             "\n recuerde introducir su IP cuando esté en casa con el comando" +
-                                            "/myMAC < suMAC >." +
+                                            "/myMAC." +
                                             "\n Para conocer todas las funciones de su central domótica introduzca " +
                                             "el comando /help");
-                                    } else {
-                                        // config.addUser(fromId, null, ip);
-                                        // config.users[fromId].ip = ip;
-                                        user.editUser(username, {mac: mac});
-                                        bot.sendMessage(fromId, "Hemos terminado la configuración de su usuario." +
-                                            "\nPara conocer todas las funciones de su central domótica " +
-                                            "introduzca el comando /help");
                                     }
                                     user.setCurrentState(username, null, null);
                                     config.saveUsers();
@@ -505,7 +501,7 @@ var botTelegram = {
     talk: function (chatId, msg) {
         bot.sendMessage(chatId, msg);
     },
-    wathDog: function (T) {
+    watchDog: function (T) {
         var filename = "peepholder.png";
         var opPhoto = false;
         var opAlarm = false;

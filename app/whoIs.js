@@ -4,6 +4,7 @@ var user = require('./user');
 var admin = require('./admin');
 var date = require('../helpers/date');
 var botTelegram = require('../botTelegram');
+var server = require('../helpers/server');
 var csv = require('../helpers/csv');
 var alarm = require('./alarm');
 
@@ -20,11 +21,25 @@ var whoIs = {
             arp.getAllMAC("192.168.1.", function (mac) {
                 var nAtHome = 0;
                 var n = false;
+                var pServer = server.getCatchIP();
+
+                if(pServer.catchIP == 2) {
+                    for(var m in mac) {
+                        if(mac[m].ip == pServer.pIP.ip) {
+                            user.editUser(pServer.pIP.username, {mac:mac[m].mac});
+                            user.setCurrentState(pServer.pIP.username, null, null);
+                            botTelegram.talk(pServer.pIP.id,
+                                "Se te ha asignado la MAC " + mac[m].mac);
+                        }
+                    }
+                    server.setCatchIP(0, {});
+                }
                 var nWhoAtHome = user.getUserByMAC(mac); // whoAtHome
                 var whoAtHome = user.getUserAtHome(); // whoAtHome - 1
                 for (var u in whoAtHome) {
                     var nState = nWhoAtHome[u].atHome;
                     var state = whoAtHome[u].atHome;
+
                     if(nState && state) {
                         nAtHome++;
                         // console.log(u + ' sigue dentro');
@@ -90,6 +105,10 @@ var whoIs = {
             reg.push(p);
             csv.writeCSV('reg/' + self.filename + '.csv', reg);
         })
+    },
+    setCatchIP: function (value, p) {
+        catchIP = true;
+        pIP = p;
     }
 };
 

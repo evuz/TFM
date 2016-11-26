@@ -65,8 +65,8 @@ var arp = {
                                 }
                                 mac = mac + arrMac[m] + ":";
                             }
-                            mac = mac.slice(0,mac.length-1);
-                            console.log("direccion IP: " + ipaddress);
+                            mac = {mac: mac.slice(0,mac.length-1), ip: ipaddress};
+                            // console.log("direccion IP: " + ipaddress);
 
                             callback(mac);
                         }else{
@@ -104,7 +104,7 @@ var arp = {
                     if (table.length >= 2) {
                         var parts = table[1].split(' ').filter(String);
                         if(parts[2] && parts[2].length > 9){
-                            callback({mac: parts[2]});
+                            callback({mac: parts[2], ip: ipaddress});
                         }else{
                             callback(false);
                         }
