@@ -11,7 +11,11 @@
   % normal IEEE
   \usepackage{cite}
 \fi
-
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{eurosym} 
+\renewcommand{\tablename}{Tab.}
+\graphicspath{ {images/} }
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
@@ -81,23 +85,44 @@ Computer Society, IEEE, IEEEtran, journal, \LaTeX, paper, template.
 \ifCLASSOPTIONcompsoc
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
 \else
-\section{Introduccion}
+\section{Introduccion y objetivos}
 \label{sec:introduction}
 \fi
 
-\IEEEPARstart{E}{ste} Trabajo fin de Máster
+\IEEEPARstart En este Trabajo fin de Máster (TFM) vamos a tratar de ver el impacto que pueden generar las nuevas tecnologías que se están empezando a expandir.
+Estas nuevas tecnologías tienen siempre en mente una perspectiva, el llamado "Internet of Things" (IoT) o Internet de las Cosas. 
+Este es un término se refiere a la interconexión de dispositivos físicos, vehículos, edificios y otros objectos --embebidos con electrónica, software, sensores, actuadores y conexión a internet que permiten la recolección de datos.
+Todo esto nos permite que los ordenadores interactúen con elementos de la vida real y ganen independencia de los seres humanos.
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+Bien es cierto, que el IoT va a suponer un gran impacto en cuanto a la industria y la investigación, pero no será menos para los ambientes domésticos ya que nos permite automatizar muchas funciones de nuestros hogares.
+En este entorno tiene gran parte de importancia el uso de los \textit{smartphones}, pues son en muchos casos los encargados de comunicar a los seres humanos con nuestros dispositivos.
 
-% needed in second column of first page if using \IEEEpubid
-%\IEEEpubidadjcol
+Otro de los dispositivos en auge y que han fomentado la automatización en los hogares son los micro-ordenadores, como son las Raspberry Pi, estos son dispositivos tremendamente versátiles y cada vez más potentes.
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+
+\subsection{Objetivos}
+En el actual TFM, vamos buscar unos objetivos basándonos en IoT en un entorno doméstico.
+Se realizará un sistema domótico básandonos en los principios del IoT.
+
+Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose en JavaScript
+y viendo las posibilidades que este lenguaje nos proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación estándar para la Raspberry Pi.
+
+Por último, el control de nuestro sistema domótico se realizará mediante Telegram, las aplicaciones de mensajerías son algo indispensable hoy en día para las personas, así que viendo la API que este servicio de mensajería nos proporciona para realizar bots, parece interesante estudiar qué clase de posibilidades se nos abren con estos tres elementos.
 
 \section{Arquitectura del sistema}
-The conclusion goes here.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{ArqSist}
+\caption{Arquitectura del sistema}
+\label{fig:arqSist}
+\end{figure}
+
+Podemos ver en la \ref{fig:arqSist} la arquitectura del sistema que se va a desarrollar. Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram de por medio.
+
+Una vez que el usuario envía un comando y el bot lo recibe, éste provoca un evento y envía la orden hacia la lógica de control. La cual actuará en consecuencia de su alrededor.
+
+De igual forma que nosotros enviamos comandos al sistema, el sistema nos puede devolver a nosotros los diferentes datos que recoge por los sensores que esté manejando en ese momento.
+
 
 \section{Desarrollo Software}
 The conclusion goes here.
@@ -106,7 +131,24 @@ The conclusion goes here.
 The conclusion goes here.
 
 \section{Costes}
-The conclusion goes here.
+El tiempo desarrollo de este sistema domótico ha sido de 100 horas, tomando un precio por hora de 30\euro, tenemos un coste de desarrollo de 3000\euro.
+Luego cada sistema tendría un coste fijo de:
+
+\begin{table}
+\centering
+\begin{tabular}{ccc}
+Raspberry Pi & ........ & 50\euro \\
+Sensores & ........ & 10\euro \\
+Actuadores & ........ & 15\euro \\
+Motores & ........ & 25\euro \\
+\hline \\
+Total & ........ & 100\euro \\
+\end{tabular} 
+\caption{Costes fijos}
+\label{tab:CostesFij}
+\end{table}
+
+Para cubrir los costes que vemos en la \ref{tab:CostesFij}, con la venta de 100 terminales, cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
 
 \section{Conclusion}
 The conclusion goes here.
