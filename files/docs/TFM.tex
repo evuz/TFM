@@ -107,6 +107,10 @@ Se realizará un sistema domótico básandonos en los principios del IoT.
 Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose en JavaScript
 y viendo las posibilidades que este lenguaje nos proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación estándar para la Raspberry Pi.
 
+El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá control sobre puertas, luces, el sistema de climatización y la alarma.
+
+Por otro lado también se tendrá un control de presencia dentro de la casa, registrando las entradas y salidas de los usuarios mediante la MAC de su smartphone y el protocolo ARP. 
+
 Por último, el control de nuestro sistema domótico se realizará mediante Telegram, las aplicaciones de mensajerías son algo indispensable hoy en día para las personas, así que viendo la API que este servicio de mensajería nos proporciona para realizar bots, parece interesante estudiar qué clase de posibilidades se nos abren con estos tres elementos.
 
 \section{Arquitectura del sistema}
@@ -117,11 +121,11 @@ Por último, el control de nuestro sistema domótico se realizará mediante Tele
 \label{fig:arqSist}
 \end{figure}
 
-Podemos ver en la \ref{fig:arqSist} la arquitectura del sistema que se va a desarrollar. Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram de por medio.
+En la figura \ref{fig:arqSist} se muestra la arquitectura del sistema que se va a desarrollar. Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram de por medio.
 
 Una vez que el usuario envía un comando y el bot lo recibe, éste provoca un evento y envía la orden hacia la lógica de control. La cual actuará en consecuencia de su alrededor.
 
-De igual forma que nosotros enviamos comandos al sistema, el sistema nos puede devolver a nosotros los diferentes datos que recoge por los sensores que esté manejando en ese momento.
+De igual forma que nosotros enviamos comandos al sistema, el sistema nos devolverá los diferentes datos que recoge por los sensores y servicios que se estén manejando en ese momento.
 
 
 \section{Desarrollo Software}
@@ -134,7 +138,7 @@ The conclusion goes here.
 El tiempo desarrollo de este sistema domótico ha sido de 100 horas, tomando un precio por hora de 30\euro, tenemos un coste de desarrollo de 3000\euro.
 Luego cada sistema tendría un coste fijo de:
 
-\begin{table}
+\begin{table}[h]
 \centering
 \begin{tabular}{ccc}
 Raspberry Pi & ........ & 50\euro \\
@@ -148,7 +152,7 @@ Total & ........ & 100\euro \\
 \label{tab:CostesFij}
 \end{table}
 
-Para cubrir los costes que vemos en la \ref{tab:CostesFij}, con la venta de 100 terminales, cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
+Para cubrir los costes que vemos en la tabla \ref{tab:CostesFij}, con la venta de 100 terminales, cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
 
 \section{Conclusion}
 The conclusion goes here.
