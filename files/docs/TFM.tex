@@ -104,8 +104,7 @@ Otro de los dispositivos en auge y que han fomentado la automatización en los h
 En el actual TFM, vamos buscar unos objetivos basándonos en IoT en un entorno doméstico.
 Se realizará un sistema domótico básandonos en los principios del IoT.
 
-Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose en JavaScript
-y viendo las posibilidades que este lenguaje nos proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación estándar para la Raspberry Pi.
+Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose con NodeJS, un entorno de ejecución para JavaScript, y viendo las posibilidades que este lenguaje nos proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación estándar para la Raspberry Pi.
 
 El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá control sobre puertas, luces, el sistema de climatización y la alarma.
 
@@ -129,7 +128,42 @@ De igual forma que nosotros enviamos comandos al sistema, el sistema nos devolve
 
 
 \section{Desarrollo Software}
-The conclusion goes here.
+Para el desarrollo del software, se va a utilizar NodeJS, para la comunicación con telegram se va a usar un módulo para interactuar con el API oficial de telegram. Este módulo nos proporciona los métodos y eventos principales a la hora de comunicarnos con el bot.
+
+En base a los comandos que el usuario env, se va a desarrollar una máquina de estados que nos permitirá interactuar con nuestro sistema.
+
+Las características que se van a incluir en nuestro sistema domótico son las siguientes:
+\begin{itemize}
+\item Control de usuarios: el acceso a los comandos de nuestro sistema queda restringido a usuarios autorizados. Se gestionarán dos tipos de permisos, administradores y usuarios.
+\item Control de presencia: el sistema domótico mediante el protocolo ARP, puede saber los dispositivos que se encuentran en ese momento en la red. Teniendo en cuenta que según datos estadísticos el 51\% de la población mundial tiene un smartphone. Podemos tener constancia de quien se encuentra en casa y guardar un registro de entrada y salida.
+\item Control remoto del portero automático: se dispondrá de una cámara en nuestra puerta la cual nos enviará una foto de quien se encuentra en ella cuando llamen al timbre. Pudiendo también enviar un mensaje de voz mediante Telegram y que este sea reproducido.
+\item Control de temperatura: mediante el servicio online \textit{openweathermap}, obtendremos la temperatura en nuestra localización
+\item Control de alarma: se desarrollará un sistema de alarma por control remoto, asistido en gran parte por nuestro sistema de control de presencia.
+\item Control de sensores y actuadores: con los 18 GPIO de la Raspberry Pi se pueden combinar diferentes sensores y actuadores.
+\end{itemize}
+
+\subsection{Máquina de estados}
+En la figura \ref{fig:MaqEst} se puede ver el diagrama de flujo de la primera toma de decisiones. 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MaqEstPrin}
+\caption{Máquina de estados Principal}
+\label{fig:MaqEst}
+\end{figure}
+
+Cuando nosotros enviamos un mensaje a nuestro control, la primera premisa que tenemos es ser usuario del sistema, si esto no se cumple directamente seremos expulsados.
+Si somos usuarios del sistema se evaluará si hemos enviado una acción o un mensaje, en el caso de ser una acción esta será evaluada como una acción de usuario o de administrador como podemos ver en las figuras ***** y *****, si no coincide con ninguna de ellas se enviará un mensaje de error.
+En el caso de que no sea una acción, se evaluará si el controlador está esperando una respuesta de nosotros a una acción anterior, esto se puede ver en la figura *********.
+
+\subsection{Control de presencia}
+
+\subsection{Control remoto del portero automático}
+
+\subsection{Control de temperatura}
+
+\subsection{Control de alarma}
+
+\subsection{Control de sensores y actuadores}
 
 \section{Pruebas de Rendimiento}
 The conclusion goes here.
