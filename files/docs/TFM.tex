@@ -143,17 +143,67 @@ Las características que se van a incluir en nuestro sistema domótico son las s
 \end{itemize}
 
 \subsection{Máquina de estados}
-En la figura \ref{fig:MaqEst} se puede ver el diagrama de flujo de la primera toma de decisiones. 
+En la figura \ref{fig:MaqEstPrin} se puede ver el diagrama de flujo de la primera toma de decisiones. 
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.5]{MaqEstPrin}
 \caption{Máquina de estados Principal}
-\label{fig:MaqEst}
+\label{fig:MaqEstPrin}
 \end{figure}
 
 Cuando nosotros enviamos un mensaje a nuestro control, la primera premisa que tenemos es ser usuario del sistema, si esto no se cumple directamente seremos expulsados.
-Si somos usuarios del sistema se evaluará si hemos enviado una acción o un mensaje, en el caso de ser una acción esta será evaluada como una acción de usuario o de administrador como podemos ver en las figuras ***** y *****, si no coincide con ninguna de ellas se enviará un mensaje de error.
-En el caso de que no sea una acción, se evaluará si el controlador está esperando una respuesta de nosotros a una acción anterior, esto se puede ver en la figura *********.
+Si somos usuarios del sistema, se evaluará si hemos enviado una acción o un mensaje, en el caso de ser una acción esta será evaluada como una acción de usuario o de administrador tal y como podemos ver en las figura \ref{fig:MaqEstAcc}, si no coincide con ninguna de ellas se enviará un mensaje de error.
+
+Además de estas acciones, existe una acción especial \textit{/help}, que le muestra al usuario todas las acciones que tiene disponible.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.4]{MaqEstAcc}
+\caption{Máquina de estados Acciones}
+\label{fig:MaqEstAcc}
+\end{figure}
+
+En el caso de que no sea una acción, se evaluará si el controlador está esperando una respuesta de nosotros a una acción anterior. Este proceso forma una nueva máquina de estados que estará controlada por la variable \textit{"estado actual"}, que es independiente para cada usuario.
+Este tratamiento lo veremos con más detalle en la subsección \ref{sec:ControlUsuarios}
+
+\subsection{Control de usuarios}\label{sec:ControlUsuarios}
+
+En este punto, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales son las posibilidades que tiene cada tipo de usuario.
+
+Cada usuario en telegram se identifica por un ID único que se asigna automáticamente en el momento del registro en la aplicación y además por un alias, también único, el cual se asigna el usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, hemos optado por realizar el envío de de los mensajes siempre a través del ID, pues de esta forma tenemos la certeza de que nunca va a fallar el envío del mensaje. 
+
+Los usuarios se almacenan en una variable \textit{users}, identificando a cada usuario por su alias.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{UserEst}
+\caption{Estructura de usuario}
+\label{fig:UserEst}
+\end{figure}
+
+La estructura de  usuario se puede ver en la fig. \ref{fig:UserEst}. A continuación se va a explicar el significado y el uso de cada propiedad:
+\begin{itemize}
+\item Alias: es el nombre con el que se identificarán a los usuarios. Cuando el bot recibe un mensaje de un usuario, recibimos su alias como identificación.
+\item ID: número de identificación, que se usará para enviar mensajes a este usuario cuando sea necesario, al igual que el alias lo recibimos en cada mensaje que envía el usuario.
+\item MAC: aquí almacenaremos la MAC del teléfono del usuario. La MAC la se utilizará en el sistema de control de presencia y la obtendremos habilitando un servidor desde nuestra Raspberry Pi y pidiendole al usuario cuando se registre que acceda a ese servidor.
+\item Registrado: cuando el usuario introduzca la contraseña de usuario del sistema, en este campo se introducirá la hora del registro, para controlar que cuando se cumpla el tiempo configurado por el administrador este usuario tenga que volver a introducir la contraseña.
+\item ¿En casa?: esta propiedad indica si el usuario está en casa. 
+\item ¿Es admin?: esta propiedad indica si el usuario es administrador.
+\item Admin registrado: tiene la misma función que la propiedad \textit{registrado}, pero esta vez como administrador 
+\item Estado actual: esta propiedad nos permite interactuar con el sistema continuamente, cuando se utilice una acción que necesite más información, la propiedad \textit{acción} toma el valor de la acción pedida y la propiedad \textit{estado} se irá actualizando dependiendo de la cantidad de datos que se necesiten.
+\end{itemize}
+
+Un apartado importante sobre el control domótico es la seguridad, no se puede permitir que una persona externa se conecte a nuestro sistema. El problema que se encuentra al introducir la contraseña es la imposibilidad de que se edite el mensaje automáticamente por el sistema, ya que telegram sólo ofrece la posibilidad de editar mensajes propios. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{imgPass}
+\caption{Proceso introducción contraseña}
+\label{fig:imgPass}
+\end{figure}
+
+Para subsanar este problema, el sistema generará una key aleatoria, la cual enviará con un botón de edición. El usuario deberá sumar esta key a la contraseña real término a término.
+De esta forma, al pulsar el botón de \textit{Editar}, el sistema automáticamente eliminará el mensaje con la key, podemos ver el proceso en la figura \ref{fig:imgPass}
 
 \subsection{Control de presencia}
 
@@ -164,6 +214,10 @@ En el caso de que no sea una acción, se evaluará si el controlador está esper
 \subsection{Control de alarma}
 
 \subsection{Control de sensores y actuadores}
+
+\subsection{Almacenaniento de opciones}
+
+
 
 \section{Pruebas de Rendimiento}
 The conclusion goes here.
