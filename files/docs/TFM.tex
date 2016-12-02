@@ -208,22 +208,43 @@ De esta forma, al pulsar el botón de \textit{Editar}, el sistema automáticamen
 \subsection{Control de presencia}
 
 \subsection{Control remoto del portero automático}
+Mediante los mensajes de voz integrados en Telegram, un altavoz y una cámara, se  
+ha construido este sistema para el control remoto del portero automático. 
 
-\subsection{Control de temperatura}
+Este control se activará cuando alguien llame al timbre, uno de los GPIO de la 
+raspberry emitirá el evento que tomará la una captura de la cámara y esta 
+captura se enviará a cada usuario del sistema. 
 
-\subsection{Control de alarma}
+De esta forma, cada vez que un usuario del sistema envíe un mensaje de voz a 
+nuestro sistema este mensaje de voz se reproducirá por el altavoz instalado.
 
 \subsection{Control de sensores y actuadores}
+
+\subsection{Control de temperatura}
+El control de la temperatura se va a realizar mediante el API del servicio online openweathermap, 
+Cada hora se ejecutará un método en nuestro sistema que hará una petición al 
+servicio de openweathermap, cuando se realice esta petición, dependiendo de la 
+configuración de los sensores y actuadores se realizarán una serie de 
+evaluaciones para ajustar nuestro hogar a las condiciones meteorológicas y a la 
+temperatura del momento.
+
+Nuestro sistema necesita tener las coordenadas de su ubicación, así que cuando 
+se realice la configuración inicial del bot nos pedirá que enviemos la ubicación 
+en la que se encuentra. Esto se realizará mediante las opciones de telegram, el 
+sistema recibirá la ubicación y almacenará las coordenadas de estas.
+
+\subsection{Control de alarma}
 
 \subsection{Almacenaniento de opciones}
 En este apartado, vamos a ver como se almacenan las opciones de forma permanente a la espera para prevenir la pérdida de datos con la caida de la aplicación. La cantidad de información que se maneja no tiene tamaño como para usar una base de datos como mySQL, MongoDB, etc. 
 Se ha optado por almacenar los datos persistentes en archivos CSV, de esta forma tenemos implementado un módulo de lectura y escritura de este tipo de archivos para en un futuro poder usar el envío de ficheros CSV para configurar el sistema, añadir usuarios, etc.
 
-
 \section{Pruebas de Rendimiento}
 The conclusion goes here.
 
 \section{Costes}
+AÑADIR CAMARA Y ALTAVOZ
+
 El tiempo desarrollo de este sistema domótico ha sido de 300 horas, tomando un precio por hora de 30\euro, tenemos un coste de desarrollo de 9000\euro.
 
 Cada sistema tendría un coste fijo que sería la Raspberry, a un precio de 60\euro. Para cubrir los costes con la venta de 100 terminales, cada terminal debería tener un precio de 181.5\euro
