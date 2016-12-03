@@ -81,36 +81,49 @@ Computer Society, IEEE, IEEEtran, journal, \LaTeX, paper, template.
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
+\section{Introduccion y objetivos}\label{sec:introduccion}
 
-\ifCLASSOPTIONcompsoc
-\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\else
-\section{Introduccion y objetivos}
-\label{sec:introduction}
-\fi
+\IEEEPARstart En este Trabajo fin de Máster (TFM) vamos a tratar de ver el impacto 
+que pueden generar las nuevas tecnologías que se están empezando a expandir.
+Estas nuevas tecnologías tienen siempre en mente una perspectiva, el llamado
+ "Internet of Things" (IoT) o Internet de las Cosas. 
+Este es un término se refiere a la interconexión de dispositivos físicos, vehículos, edificios 
+y otros objectos --embebidos con electrónica, software, sensores, actuadores y conexión a 
+internet que permiten la recolección de datos.
+Todo esto nos permite que los ordenadores interactúen con elementos de la vida real y ganen 
+independencia de los seres humanos.
 
-\IEEEPARstart En este Trabajo fin de Máster (TFM) vamos a tratar de ver el impacto que pueden generar las nuevas tecnologías que se están empezando a expandir.
-Estas nuevas tecnologías tienen siempre en mente una perspectiva, el llamado "Internet of Things" (IoT) o Internet de las Cosas. 
-Este es un término se refiere a la interconexión de dispositivos físicos, vehículos, edificios y otros objectos --embebidos con electrónica, software, sensores, actuadores y conexión a internet que permiten la recolección de datos.
-Todo esto nos permite que los ordenadores interactúen con elementos de la vida real y ganen independencia de los seres humanos.
+Bien es cierto, que el IoT va a suponer un gran impacto en cuanto a la industria y la investigación,
+ pero no será menos para los ambientes domésticos ya que nos permite automatizar muchas funciones 
+ de nuestros hogares.
+En este entorno tiene gran parte de importancia el uso de los \textit{smartphones}, pues son en 
+muchos casos los encargados de comunicar a los seres humanos con nuestros dispositivos.
 
-Bien es cierto, que el IoT va a suponer un gran impacto en cuanto a la industria y la investigación, pero no será menos para los ambientes domésticos ya que nos permite automatizar muchas funciones de nuestros hogares.
-En este entorno tiene gran parte de importancia el uso de los \textit{smartphones}, pues son en muchos casos los encargados de comunicar a los seres humanos con nuestros dispositivos.
-
-Otro de los dispositivos en auge y que han fomentado la automatización en los hogares son los micro-ordenadores, como son las Raspberry Pi, estos son dispositivos tremendamente versátiles y cada vez más potentes.
+Otro de los dispositivos en auge y que han fomentado la automatización en los hogares son los 
+micro-ordenadores, como son las Raspberry Pi, estos son dispositivos tremendamente versátiles 
+y cada vez más potentes.
 
 
 \subsection{Objetivos}
 En el actual TFM, vamos buscar unos objetivos basándonos en IoT en un entorno doméstico.
 Se realizará un sistema domótico básandonos en los principios del IoT.
 
-Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose con NodeJS, un entorno de ejecución para JavaScript, y viendo las posibilidades que este lenguaje nos proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación estándar para la Raspberry Pi.
+Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose con NodeJS, 
+un entorno de ejecución para JavaScript, y viendo las posibilidades que este lenguaje nos 
+proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación 
+estándar para la Raspberry Pi.
 
-El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá control sobre puertas, luces, el sistema de climatización y la alarma.
+El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones 
+de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá 
+control sobre puertas, luces, el sistema de climatización y la alarma.
 
-Por otro lado también se tendrá un control de presencia dentro de la casa, registrando las entradas y salidas de los usuarios mediante la MAC de su smartphone y el protocolo ARP. 
+Por otro lado también se tendrá un control de presencia dentro de la casa, registrando las 
+entradas y salidas de los usuarios mediante la MAC de su smartphone y el protocolo ARP. 
 
-Por último, el control de nuestro sistema domótico se realizará mediante Telegram, las aplicaciones de mensajerías son algo indispensable hoy en día para las personas, así que viendo la API que este servicio de mensajería nos proporciona para realizar bots, parece interesante estudiar qué clase de posibilidades se nos abren con estos tres elementos.
+Por último, el control de nuestro sistema domótico se realizará mediante Telegram, las aplicaciones 
+de mensajerías son algo indispensable hoy en día para las personas, así que viendo la API que este 
+servicio de mensajería nos proporciona para realizar bots, parece interesante estudiar qué clase de 
+posibilidades se nos abren con estos tres elementos.
 
 \section{Arquitectura del sistema}
 \begin{figure}[h]
@@ -120,26 +133,43 @@ Por último, el control de nuestro sistema domótico se realizará mediante Tele
 \label{fig:arqSist}
 \end{figure}
 
-En la figura \ref{fig:arqSist} se muestra la arquitectura del sistema que se va a desarrollar. Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram de por medio.
+En la figura \ref{fig:arqSist} se muestra la arquitectura del sistema que se va a desarrollar. 
+Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la 
+Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram 
+de por medio.
 
-Una vez que el usuario envía un comando y el bot lo recibe, éste provoca un evento y envía la orden hacia la lógica de control. La cual actuará en consecuencia de su alrededor.
+Una vez que el usuario envía un comando y el bot lo recibe, éste provoca un evento y envía 
+la orden hacia la lógica de control. La cual actuará en consecuencia de su alrededor.
 
-De igual forma que nosotros enviamos comandos al sistema, el sistema nos devolverá los diferentes datos que recoge por los sensores y servicios que se estén manejando en ese momento.
+De igual forma que nosotros enviamos comandos al sistema, el sistema nos devolverá los diferentes 
+datos que recoge por los sensores y servicios que se estén manejando en ese momento.
 
 
 \section{Desarrollo Software}
-Para el desarrollo del software, se va a utilizar NodeJS, para la comunicación con telegram se va a usar un módulo para interactuar con el API oficial de telegram. Este módulo nos proporciona los métodos y eventos principales a la hora de comunicarnos con el bot.
+Para el desarrollo del software, se va a utilizar NodeJS, para la comunicación con telegram se va a 
+usar un módulo para interactuar con el API oficial de telegram. Este módulo nos proporciona los 
+métodos y eventos principales a la hora de comunicarnos con el bot.
 
-En base a los comandos que el usuario env, se va a desarrollar una máquina de estados que nos permitirá interactuar con nuestro sistema.
+En base a los comandos que el usuario env, se va a desarrollar una máquina de estados que nos 
+permitirá interactuar con nuestro sistema.
 
 Las características que se van a incluir en nuestro sistema domótico son las siguientes:
 \begin{itemize}
-\item Control de usuarios: el acceso a los comandos de nuestro sistema queda restringido a usuarios autorizados. Se gestionarán dos tipos de permisos, administradores y usuarios.
-\item Control de presencia: el sistema domótico mediante el protocolo ARP, puede saber los dispositivos que se encuentran en ese momento en la red. Teniendo en cuenta que según datos estadísticos el 51\% de la población mundial tiene un smartphone. Podemos tener constancia de quien se encuentra en casa y guardar un registro de entrada y salida.
-\item Control remoto del portero automático: se dispondrá de una cámara en nuestra puerta la cual nos enviará una foto de quien se encuentra en ella cuando llamen al timbre. Pudiendo también enviar un mensaje de voz mediante Telegram y que este sea reproducido.
-\item Control de temperatura: mediante el servicio online \textit{openweathermap}, obtendremos la temperatura en nuestra localización
-\item Control de alarma: se desarrollará un sistema de alarma por control remoto, asistido en gran parte por nuestro sistema de control de presencia.
-\item Control de sensores y actuadores: con los 18 GPIO de la Raspberry Pi se pueden combinar diferentes sensores y actuadores.
+\item Control de usuarios: el acceso a los comandos de nuestro sistema queda restringido a 
+usuarios autorizados. Se gestionarán dos tipos de permisos, administradores y usuarios.
+\item Control de presencia: el sistema domótico mediante el protocolo ARP, puede saber los 
+dispositivos que se encuentran en ese momento en la red. Teniendo en cuenta que según datos 
+estadísticos el 51\% de la población mundial tiene un smartphone. Podemos tener constancia de 
+quien se encuentra en casa y guardar un registro de entrada y salida.
+\item Control remoto del portero automático: se dispondrá de una cámara en nuestra puerta la cual 
+nos enviará una foto de quien se encuentra en ella cuando llamen al timbre. Pudiendo también enviar 
+un mensaje de voz mediante Telegram y que este sea reproducido.
+\item Control de temperatura: mediante el servicio online \textit{openweathermap}, obtendremos la 
+temperatura en nuestra localización
+\item Control de alarma: se desarrollará un sistema de alarma por control remoto, asistido en 
+gran parte por nuestro sistema de control de presencia.
+\item Control de sensores y actuadores: con los 18 GPIO de la Raspberry Pi se pueden combinar 
+diferentes sensores y actuadores.
 \end{itemize}
 
 \subsection{Máquina de estados}
@@ -151,10 +181,15 @@ En la figura \ref{fig:MaqEstPrin} se puede ver el diagrama de flujo de la primer
 \label{fig:MaqEstPrin}
 \end{figure}
 
-Cuando nosotros enviamos un mensaje a nuestro control, la primera premisa que tenemos es ser usuario del sistema, si esto no se cumple directamente seremos expulsados.
-Si somos usuarios del sistema, se evaluará si hemos enviado una acción o un mensaje, en el caso de ser una acción esta será evaluada como una acción de usuario o de administrador tal y como podemos ver en las figura \ref{fig:MaqEstAcc}, si no coincide con ninguna de ellas se enviará un mensaje de error.
+Cuando nosotros enviamos un mensaje a nuestro control, la primera premisa que tenemos es 
+ser usuario del sistema, si esto no se cumple directamente seremos expulsados.
+Si somos usuarios del sistema, se evaluará si hemos enviado una acción o un mensaje, en el 
+caso de ser una acción esta será evaluada como una acción de usuario o de administrador tal y 
+como podemos ver en las figura \ref{fig:MaqEstAcc}, si no coincide con ninguna de ellas se 
+enviará un mensaje de error.
 
-Además de estas acciones, existe una acción especial \textit{/help}, que le muestra al usuario todas las acciones que tiene disponible.
+Además de estas acciones, existe una acción especial \textit{/help}, que le muestra al usuario 
+todas las acciones que tiene disponible.
 
 \begin{figure}[h]
 \centering
@@ -163,14 +198,21 @@ Además de estas acciones, existe una acción especial \textit{/help}, que le mu
 \label{fig:MaqEstAcc}
 \end{figure}
 
-En el caso de que no sea una acción, se evaluará si el controlador está esperando una respuesta de nosotros a una acción anterior. Este proceso forma una nueva máquina de estados que estará controlada por la variable \textit{"estado actual"}, que es independiente para cada usuario.
+En el caso de que no sea una acción, se evaluará si el controlador está esperando una respuesta 
+de nosotros a una acción anterior. Este proceso forma una nueva máquina de estados que estará 
+controlada por la variable \textit{"estado actual"}, que es independiente para cada usuario.
 Este tratamiento lo veremos con más detalle en la subsección \ref{sec:ControlUsuarios}
 
 \subsection{Control de usuarios}\label{sec:ControlUsuarios}
 
-En este punto, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales son las posibilidades que tiene cada tipo de usuario.
+En este punto, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales 
+son las posibilidades que tiene cada tipo de usuario.
 
-Cada usuario en telegram se identifica por un ID único que se asigna automáticamente en el momento del registro en la aplicación y además por un alias, también único, el cual se asigna el usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, hemos optado por realizar el envío de de los mensajes siempre a través del ID, pues de esta forma tenemos la certeza de que nunca va a fallar el envío del mensaje. 
+Cada usuario en telegram se identifica por un ID único que se asigna automáticamente en 
+el momento del registro en la aplicación y además por un alias, también único, el cual se asigna el 
+usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, 
+hemos optado por realizar el envío de de los mensajes siempre a través del ID, pues de esta forma 
+tenemos la certeza de que nunca va a fallar el envío del mensaje. 
 
 Los usuarios se almacenan en una variable \textit{users}, identificando a cada usuario por su alias.
 
@@ -181,31 +223,71 @@ Los usuarios se almacenan en una variable \textit{users}, identificando a cada u
 \label{fig:UserEst}
 \end{figure}
 
-La estructura de  usuario se puede ver en la fig. \ref{fig:UserEst}. A continuación se va a explicar el significado y el uso de cada propiedad:
+La estructura de  usuario se puede ver en la fig. \ref{fig:UserEst}. A continuación se va a explicar 
+el significado y el uso de cada propiedad:
 \begin{itemize}
-\item Alias: es el nombre con el que se identificarán a los usuarios. Cuando el bot recibe un mensaje de un usuario, recibimos su alias como identificación.
-\item ID: número de identificación, que se usará para enviar mensajes a este usuario cuando sea necesario, al igual que el alias lo recibimos en cada mensaje que envía el usuario.
-\item MAC: aquí almacenaremos la MAC del teléfono del usuario. La MAC la se utilizará en el sistema de control de presencia y la obtendremos habilitando un servidor desde nuestra Raspberry Pi y pidiendole al usuario cuando se registre que acceda a ese servidor.
-\item Registrado: cuando el usuario introduzca la contraseña de usuario del sistema, en este campo se introducirá la hora del registro, para controlar que cuando se cumpla el tiempo configurado por el administrador este usuario tenga que volver a introducir la contraseña.
+\item Alias: es el nombre con el que se identificarán a los usuarios. Cuando el bot recibe un mensaje 
+de un usuario, recibimos su alias como identificación.
+\item ID: número de identificación, que se usará para enviar mensajes a este usuario cuando sea 
+necesario, al igual que el alias lo recibimos en cada mensaje que envía el usuario.
+\item MAC: aquí almacenaremos la MAC del teléfono del usuario. La MAC la se utilizará en el 
+sistema de control de presencia y la obtendremos habilitando un servidor desde nuestra 
+Raspberry Pi y pidiendole al usuario cuando se registre que acceda a ese servidor.
+\item Registrado: cuando el usuario introduzca la contraseña de usuario del sistema, en 
+este campo se introducirá la hora del registro, para controlar que cuando se cumpla el tiempo 
+configurado por el administrador este usuario tenga que volver a introducir la contraseña.
 \item ¿En casa?: esta propiedad indica si el usuario está en casa. 
 \item ¿Es admin?: esta propiedad indica si el usuario es administrador.
-\item Admin registrado: tiene la misma función que la propiedad \textit{registrado}, pero esta vez como administrador 
-\item Estado actual: esta propiedad nos permite interactuar con el sistema continuamente, cuando se utilice una acción que necesite más información, la propiedad \textit{acción} toma el valor de la acción pedida y la propiedad \textit{estado} se irá actualizando dependiendo de la cantidad de datos que se necesiten.
+\item Admin registrado: tiene la misma función que la propiedad \textit{registrado}, pero esta 
+vez como administrador 
+\item Estado actual: esta propiedad nos permite interactuar con el sistema continuamente, 
+cuando se utilice una acción que necesite más información, la propiedad \textit{acción} toma 
+el valor de la acción pedida y la propiedad \textit{estado} se irá actualizando dependiendo de 
+la cantidad de datos que se necesiten.
 \end{itemize}
 
-Un apartado importante sobre el control domótico es la seguridad, no se puede permitir que una persona externa se conecte a nuestro sistema. El problema que se encuentra al introducir la contraseña es la imposibilidad de que se edite el mensaje automáticamente por el sistema, ya que telegram sólo ofrece la posibilidad de editar mensajes propios. 
+Un apartado importante sobre el control domótico es la seguridad, no se puede permitir que 
+una persona externa se conecte a nuestro sistema. El problema que se encuentra al introducir 
+la contraseña es la imposibilidad de que se edite el mensaje automáticamente por el sistema, 
+ya que telegram sólo ofrece la posibilidad de editar mensajes propios. 
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.5]{imgPass}
+\includegraphics[scale=0.6]{imgPass}
 \caption{Proceso introducción contraseña}
 \label{fig:imgPass}
 \end{figure}
 
-Para subsanar este problema, el sistema generará una key aleatoria, la cual enviará con un botón de edición. El usuario deberá sumar esta key a la contraseña real término a término.
-De esta forma, al pulsar el botón de \textit{Editar}, el sistema automáticamente eliminará el mensaje con la key, podemos ver el proceso en la figura \ref{fig:imgPass}
+Para subsanar este problema, el sistema generará una key aleatoria, la cual enviará con un 
+botón de edición. El usuario deberá sumar esta key a la contraseña real término a término.
+De esta forma, al pulsar el botón de \textit{Editar}, el sistema automáticamente eliminará el 
+mensaje con la key, podemos ver el proceso en la figura \ref{fig:imgPass}
+
+\textbf{AQUI AÑADIR UN DIAGRAMA DE LOS RAROS}
 
 \subsection{Control de presencia}
+Para la detección de presencia nos hemos basado en el protocolo ARP. Sabiendo la 
+ínfima posibilidad que hay de coincidir dos MAC en un misma red, cada usuario 
+será identificado en por el sistema con la MAC de su smartphone. De esta forma, 
+cada vez que tengamos una conexión o desconexión en nuestra red se detectará el 
+dispositivo y se asociará con un usuario.
+
+Estas entradas y salidas se van a ir almacenando en un fichero CSV diario, a los 
+cuales sólo los administradores del sistema tendrán acceso. 
+
+La forma de detectar la MAC del usuario es mediante un servidor creado en 
+nuestra red local, al cual el usuario deberá conectarse. Con este proceso el 
+sistema obtendrá la IP del dispositivo del usuario. 
+Cabe recordar que la comunicación con el sistema se realiza a través de la 
+aplicación de mensajería, por lo tanto aunque nos encontremos en la misma red 
+que el sistema no se podrá obtener la IP enviando un mensaje, pues la 
+identificación que se utiliza en la aplicación de mensajería es diferente.
+
+Una vez que eser tenga la IP del usuario, en el siguiente reconocimeinto que se 
+haga de la red se identificará la MAC del usuario y se le asignará en su 
+correspondiente entrada, como se vio en la subsección \ref{sec:ControlUsuarios}
+
+\textbf{AÑADIR UN DIAGRAMA DE LOS RAROS}
 
 \subsection{Control remoto del portero automático}
 Mediante los mensajes de voz integrados en Telegram, un altavoz y una cámara, se  
@@ -219,6 +301,31 @@ De esta forma, cada vez que un usuario del sistema envíe un mensaje de voz a
 nuestro sistema este mensaje de voz se reproducirá por el altavoz instalado.
 
 \subsection{Control de sensores y actuadores}
+Para el control de los sensores y los actuadores se van a usar log GPIOs de la 
+Raspberry Pi, aunque tambien es posible encontrarlos controlados por USB.
+
+Para el control de los GPIOs se usará el módulo de NodeJS llamado 
+\textit{rpi-gpio}, con este módulo tenemos preparado los métodos para configurar 
+los GPIO, escribir, leer y escuchar los eventos que producen los cambios.
+
+Los sensores y actuadores a incluir dependerá de las peticiones del usuario, ya 
+que los GPIOs son bastante polivalentes en cuanto a funcionalidad, por lo que se 
+dejarán preparadas las funciones para trabajar con los siguientes elementos, 
+aunque se podrían añadir más:
+
+\begin{itemize}
+  \item Luces: un funcionamiento sencillo como es el apagar y encender luces, a 
+  petición del usuario el pin configurado para esta función se pondrá al valor 
+  pedido.
+  \item Climatización: al igual que con las luces, se puede preparar la 
+  climatización para ser encendida y apagada.
+  \item Toldos y persianas: este control se podría simular con motores DC, estos 
+  motores regulan su velocidad mediante PWM y se controla la posición inicial y 
+  final mediante finales de carrera. 
+  Por consiguiente, midiendo el tiempo entre la 
+  posición final y la inicial se puede hacer aproximaciones de posiciones 
+  intermedias. La velocidad de subida y bajada será fija.
+\end{itemize}
 
 \subsection{Control de temperatura}
 El control de la temperatura se va a realizar mediante el API del servicio online openweathermap, 
@@ -234,6 +341,18 @@ en la que se encuentra. Esto se realizará mediante las opciones de telegram, el
 sistema recibirá la ubicación y almacenará las coordenadas de estas.
 
 \subsection{Control de alarma}
+La alarma contará con sensores de apertura de puertas y ventanas para la 
+detección y una señal acústica para indicar la presencia dentro del hogar.
+
+El proceso de activar y desactivar la alarma será siempre manual, aunque el 
+sistema de detección de presencia servirá de asistente, de forma que cuando no 
+haya nadie en casa enviará a todos los administradores un mensaje avisando de la 
+desprotección del hogar. 
+
+Todos los usuarios tienen permisos para activar y desactivar la alarma, pero 
+aunque estén registrados tendrá que insertar la contraseña para que la acción 
+tenga efecto. De esta forma, una vez que el sistema detecte presencia, en la 
+entrada, dará al usuario un margen de 15 segundos para desactivar la alarma.
 
 \subsection{Almacenaniento de opciones}
 
@@ -241,9 +360,11 @@ sistema recibirá la ubicación y almacenará las coordenadas de estas.
 The conclusion goes here.
 
 \section{Costes}
-AÑADIR CAMARA Y ALTAVOZ
+\textbf{AÑADIR CAMARA,  ALTAVOZ, SENSOR ALARMA}
 
-El tiempo desarrollo de este sistema domótico ha sido de 100 horas, tomando un precio por hora de 30\euro, tenemos un coste de desarrollo de 3000\euro.
+El tiempo desarrollo de este sistema domótico ha sido de 100 horas, 
+tomando un precio por hora de 30\euro, 
+tenemos un coste de desarrollo de 3000\euro.
 Luego cada sistema tendría un coste fijo de:
 
 \begin{table}[h]
@@ -260,7 +381,8 @@ Total & ........ & 100\euro \\
 \label{tab:CostesFij}
 \end{table}
 
-Para cubrir los costes que vemos en la tabla \ref{tab:CostesFij}, con la venta de 100 terminales, cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
+Para cubrir los costes que vemos en la tabla \ref{tab:CostesFij}, con la venta de 100 terminales, 
+cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
 
 \section{Conclusion}
 The conclusion goes here.
