@@ -355,6 +355,8 @@ tenga efecto. De esta forma, una vez que el sistema detecte presencia, en la
 entrada, dará al usuario un margen de 15 segundos para desactivar la alarma.
 
 \subsection{Almacenaniento de opciones}
+En este apartado, vamos a ver como se almacenan las opciones de forma permanente a la espera para prevenir la pérdida de datos con la caida de la aplicación. La cantidad de información que se maneja no tiene tamaño como para usar una base de datos como mySQL, MongoDB, etc. 
+Se ha optado por almacenar los datos persistentes en archivos CSV, de esta forma tenemos implementado un módulo de lectura y escritura de este tipo de archivos para en un futuro poder usar el envío de ficheros CSV para configurar el sistema, añadir usuarios, etc.
 
 \section{Pruebas de Rendimiento}
 The conclusion goes here.
@@ -362,29 +364,17 @@ The conclusion goes here.
 \section{Costes}
 \textbf{AÑADIR CAMARA,  ALTAVOZ, SENSOR ALARMA}
 
-El tiempo desarrollo de este sistema domótico ha sido de 100 horas, 
-tomando un precio por hora de 30\euro, 
-tenemos un coste de desarrollo de 3000\euro.
-Luego cada sistema tendría un coste fijo de:
+El tiempo desarrollo de este sistema domótico ha sido de 300 horas, tomando un 
+precio por hora de 30\euro, tenemos un coste de desarrollo de 9000\euro.
 
-\begin{table}[h]
-\centering
-\begin{tabular}{ccc}
-Raspberry Pi & ........ & 50\euro \\
-Sensores & ........ & 10\euro \\
-Actuadores & ........ & 15\euro \\
-Motores & ........ & 25\euro \\
-\hline \\
-Total & ........ & 100\euro \\
-\end{tabular} 
-\caption{Costes fijos}
-\label{tab:CostesFij}
-\end{table}
+Cada sistema tendría un coste fijo que sería la Raspberry, a un precio de 60\euro. 
+Para cubrir los costes con la venta de 100 terminales, cada terminal debería tener un precio de 
+181.5\euro (IVA incl.)
 
-Para cubrir los costes que vemos en la tabla \ref{tab:CostesFij}, con la venta de 100 terminales, 
-cada terminal debería tener un precio de 157,30\euro (IVA Incl.)
+A continuación habría que sumar los sensores y actuadores que desea el cliente y el coste 
+de su instalación.
 
-\section{Conclusion}
+\section{Conclusiones}
 The conclusion goes here.
 
 \hfill mds
