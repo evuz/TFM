@@ -19,6 +19,7 @@ var photo = require("./helpers/photo");
 
 var ip = "192.168.1.101";
 var bot;
+
 var botTelegram = {
     init: function () {
         var token = '221791769:AAGrGoOSc_dOegZLwaSsQq40C6XUrqiLfSY';
@@ -51,6 +52,7 @@ var botTelegram = {
                 var exec = require('child_process').exec;
                 exec('opusdec ' + value + ' ./files/file.wav', function (error, stdout) {
                     console.log(stdout);
+                    fs.unlink(value);
                     if (error) throw error;
                     exec('play ./files/file.wav', function (error, stdout, stderr) {
                         console.log(stdout);
