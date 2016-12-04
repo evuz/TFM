@@ -14,6 +14,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{eurosym} 
+\usepackage{array} 
 \renewcommand{\tablename}{Tab.}
 \graphicspath{ {images/} }
 % *** GRAPHICS RELATED PACKAGES ***
@@ -106,12 +107,12 @@ y cada vez más potentes.
 
 \subsection{Objetivos}
 En el actual TFM, vamos buscar unos objetivos basándonos en IoT en un entorno doméstico.
+
 Se realizará un sistema domótico básandonos en los principios del IoT.
 
-Para llevar a cabo el primer objetivo, se va a usar una Raspberry Pi programandose con NodeJS, 
-un entorno de ejecución para JavaScript, y viendo las posibilidades que este lenguaje nos 
-proporciona en relación a Python, el cuál se puede decir que es el lenguaje de programación 
-estándar para la Raspberry Pi.
+Para llevar a cabo este primer objetivo, se va a usar una Raspberry Pi programandose con NodeJS, 
+un entorno de ejecución para JavaScript, y viendo que este lenguaje puede ser una alternativa real a 
+Python, el cuál es el lenguaje de programación más extendido para la Raspberry Pi.
 
 El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones 
 de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá 
@@ -173,7 +174,118 @@ gran parte por nuestro sistema de control de presencia.
 diferentes sensores y actuadores.
 \end{itemize}
 
-\subsection{API Telegram}
+\subsection{API de Telegram}
+Telegram ofrece dos tipos de API. La \textit{Telegram API}, que permite crear tu propio cliente 
+telegram y la \textit{API Bot}, que permite crear programas dentro de la interfaz de un 
+cliente de telegram. En el caso que a nosotros nos corresponde nos vamos a 
+centrar en la \textit{API Bot}. 
+
+Estos bots son aplicaciones de terceros que corren dentro de un cliente de 
+telegram. Los usuarios podrán interactuar con estas aplicaciones mediante 
+mensajes, comandos, envío de ficheros, mensajes de voz, etc. Que serán 
+interpretados por nuestras aplicación.
+
+\subsubsection{¿Qué se puede hacer con los bots?}
+Los bots ofrecen diferentes posibilidades, por lo que vamos a enumerar algunas 
+de ellas:
+\begin{itemize}
+  \item \textbf{Notificación de noticias.} Un bot puede interactuar con el 
+  usuario enviando publicaciones de interés tan pronto como estas sean 
+  publicadas.
+  \item \textbf{Integrar Telegram con otros servicios.} Estos bots pueden 
+  incluirse en un chat y hacer peticiones a servicios externos, como por 
+  ejemplo: Github, Wikipedia, Youtube, IMDB.
+  \item \textbf{Juegos.} Se puede integrar contenido en HTML5, para de esta 
+  forma incluir juegos.
+  \item \textbf{Crear herramientas.} Herramientas para usar tanto en chats como 
+  de forma individual, como por ejemplo: predicciones meteorológicas, 
+  traducciones, bots para votar, etc.
+\end{itemize}
+
+\subsubsection{¿Como funcionan los bots?}
+Los usuarios pueden interactuar con los bots de dos formas diferentes:
+\begin{itemize}
+  \item Tratandolo como un \textit{usuario}, podemos abrir un chat con él o agregarlo a un grupo de tal
+  forma que estará siempre escuchando y respoderá sólo cuando se introduzca un comando registrado.
+  \item Ejecutandolo como una acción sobre el teclado, tan sólo tendremos que 
+  introducir @botname seguido de la consulta, esto permite usar el bot en 
+  cualquier chat o grupo sin necesidad de añadirlo.
+\end{itemize}
+
+Todos los mensajes, comandos y solicitudes enviados por el usuario pasan 
+directamente a la aplicación en ejecución por el usuario. El servidor de 
+Telegram se encarga del cifrado y la comunicación. La aplicación se comunica con 
+el servidor de Telegram con un sencilla interface HTTPS, que es el llamado \textit{API 
+Bot}.
+
+En este punto se pueden distinguir dos procesos diferentes, el envío de mensajes 
+del usuario al bot y el envío de mensajes desde el bot al usuario.
+
+\subsubsection{Mensajes del usuario al bot}
+Este tipo de mensajes que nosotros vamos a recibir en nuestra aplicación, son 
+representados por un objeto JSON. Este objeto tiene 2 campos principales, cada uno representado por
+un nuevo objeto JSON:
+\begin{itemize}
+  \item User. Este objeto contiene los datos del usuario envía el mensaje.
+ Podemos ver los campos más relevantes en la tabla \ref{tab:User}
+  
+  \begin{table}[h]
+  \centering
+  \begin{tabular}{cc}
+  id  & Identificador único de usuario \\ \hline
+  first\_name & Nombre de usuario \\ \hline
+  last\_name & Apellido del usuario \\ \hline
+  username & Alias único del usuario \\ \hline
+  \end{tabular} 
+  \caption{User}
+  \label{tab:User}
+  \end{table}
+
+  \item Chat. Este objeto contiene los datos del chat desde el que se envía el 
+  mensaje. Podemos ver los campos más relevantes en la tabla \ref{tab:Chat}
+  
+   \begin{table}[h]
+  \centering
+  \begin{tabular}{>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{4cm}}
+  id  & Identificador único de usuario \\ \hline
+  type & Tipo de chat, puede ser “private”, “group”, “supergroup” or “channel” 
+  \\ \hline
+  title & Título del chat \\ \hline
+  \end{tabular} 
+  \caption{Chat}
+  \label{tab:Chat}
+  \end{table}
+  
+  \item Message. En este objeto encontramos todos los campos referentes al 
+  mensaje. Podemos ver los campos más relevantes en la tabla \ref{tab:Message}
+  
+   \begin{table}[h]
+  \centering
+  \begin{tabular}{>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{4cm}}
+  message\_id  & Identificador del mensaje \\ \hline
+  from & Identificador del emisor, vacío si viene de un chat \\ \hline
+  date & Fecha del mensaje \\ \hline
+  text & Texto recibido en el mensaje \\ \hline
+  audio & Información sobre el archivo. \\ \hline
+  document & Información sobre el archivo \\ \hline
+  voice & Información sobre el archivo \\ \hline
+  photo & Información sobre el archivo \\ \hline
+  \end{tabular} 
+  \caption{Message}
+  \label{tab:Message}
+  \end{table}
+
+\end{itemize}
+Los campos que no contengan información relevante no serán recibidos.
+
+\subsubsection{Mensajes del bot al usuario}
+Al igual que el usuario puede enviar al bot mensajes de texto, audios, mensajes 
+de voz, fotos, etc. el bot puede hacer lo propio hacia los usuarios. La única 
+información necesaria en este caso es el id del usuario.
+Por ejemplo, para enviar un audio, usaremos el método \textit{sendAudio()}, como 
+argumentos a este método le pasaremos el ID del usuario y la ruta al fichero de 
+audio que se va a enviar.
+
 
 \subsection{Máquina de estados}
 En la figura \ref{fig:MaqEstPrin} se puede ver el diagrama de flujo de la primera toma de decisiones. 
@@ -208,12 +320,12 @@ Este tratamiento lo veremos con más detalle en la subsección \ref{sec:ControlU
 
 \subsection{Control de usuarios}\label{sec:ControlUsuarios}
 
-En este punto, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales 
+A continuación, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales 
 son las posibilidades que tiene cada tipo de usuario.
 
 Cada usuario en telegram se identifica por un ID único que se asigna automáticamente en 
 el momento del registro en la aplicación y además por un alias, también único, el cual se asigna el 
-usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, 
+propio usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, 
 hemos optado por realizar el envío de de los mensajes siempre a través del ID, pues de esta forma 
 tenemos la certeza de que nunca va a fallar el envío del mensaje. 
 
@@ -381,7 +493,7 @@ Se han realizado pruebas de rendimiento en los siguientes componentes del sistem
 \begin{itemize}
   \item Respuesta al protocolo ARP
   \item Captura de foto
-  \item Proceso de envío y reproducción de audio
+  \item Proceso de recepción y reproducción de audio
   \item Petición y tratamiento de datos meteorlógicos
 \end{itemize}
  la respuesta al protocolo ARP, captura de una foto y el proceso de envío de 
@@ -392,6 +504,15 @@ plataformas como son:
 \item Raspberry Pi 3
 \item SSOO Debian virtualizado sobre MacBook Pro
 \end{itemize}
+
+\subsection{Respuesta protocolo ARP}
+
+\subsection{Captura de foto}
+
+\subsection{Proceso de recepción y reproducción de audio}
+
+\subsection{Petición y tratamiento de datos meteorológicos}
+
 
 \section{Costes}
 El tiempo desarrollo de este sistema domótico ha sido de 300 horas, tomando un 
@@ -418,7 +539,22 @@ A estos costes habría que sumarle los sensores y actuadores que desea el client
 de su instalación.
 
 \section{Conclusiones}
-The conclusion goes here.
+Durante el desarrollo del TFM, se ha podido ver como todos los objetivos 
+planteados se han podido satisfacer positivamente.
+
+En primer lugar, se ha podido ver como la Raspberry Pi, aunque con sus 
+limitaciones cumple perfectamente con las exigencias que se pedian.
+
+Con respecto al desarrollo del software mediante NodeJS, se ha podido ver como 
+ha cumplido perfectamente con lo que esperabamos de él. La gran cantidad de 
+módulos que se pueden encontrar desarrollados por la comunidad han facilitado el 
+trabajo enormemente.
+
+El último objetivo que nos planteamos fue que el sistema se controlara mediante 
+una aplicación de mensajería. Se ha elegido Telegram, la cual hemos visto el API 
+que ofrece para crear aplicaciones dentro de su cliente. Este API en conjunto 
+con uno de los módulos de NodeJS nos ha permitido desarrollar nuestra aplicación 
+sin dificultad pudiendo ofrecer todas las opciones que se deseaban.
 
 \hfill mds
  
