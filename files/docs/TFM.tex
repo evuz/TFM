@@ -375,7 +375,7 @@ ya que telegram sólo ofrece la posibilidad de editar mensajes propios.
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.6]{imgPass}
-\caption{Proceso introducción contraseña}
+\caption{Ejemplo de introducción de contraseña}
 \label{fig:imgPass}
 \end{figure}
 
@@ -384,7 +384,12 @@ botón de edición. El usuario deberá sumar esta key a la contraseña real tér
 De esta forma, al pulsar el botón de \textit{Editar}, el sistema automáticamente eliminará el 
 mensaje con la key, podemos ver el proceso en la figura \ref{fig:imgPass}
 
-\textbf{AQUI AÑADIR UN DIAGRAMA DE ACTIVIDAD}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{ActPass}
+\caption{Diagrama de Actividad introducción de contraseña}
+\label{fig:ActPass}
+\end{figure}
 
 \subsection{Control de presencia}
 Para la detección de presencia nos hemos basado en el protocolo ARP. Sabiendo la 
@@ -408,7 +413,12 @@ Una vez que eser tenga la IP del usuario, en el siguiente reconocimeinto que se
 haga de la red se identificará la MAC del usuario y se le asignará en su 
 correspondiente entrada, como se vio en la subsección \ref{sec:ControlUsuarios}
 
-\textbf{AÑADIR UN DIAGRAMA DE ACTIVIDAD}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{ActMAC}
+\caption{Diagrama de Actividad Petición de MAC}
+\label{fig:ActMAC}
+\end{figure}
 
 \subsection{Control remoto del portero automático}
 Mediante los mensajes de voz integrados en Telegram, un altavoz y una cámara se  
@@ -502,14 +512,16 @@ Se han realizado pruebas de rendimiento en los siguientes componentes del sistem
   \item Proceso de recepción y reproducción de audio
   \item Petición y tratamiento de datos meteorlógicos
 \end{itemize}
- la respuesta al protocolo ARP, captura de una foto y el proceso de envío de 
-un audio. Estas pruebas de rendimientos se van a realizar sobre diferentes 
+
+Estas pruebas de rendimientos se van a realizar sobre diferentes 
 plataformas como son:
 \begin{itemize}
 \item Raspberry Pi B+
 \item Raspberry Pi 3
 \item SSOO Debian virtualizado sobre MacBook Pro
 \end{itemize}
+
+Se ha intentado medir el tiempo de respuesta de la petición, pero el dato que recibimos en el mensaje de telegram se da en formato \textit{Unix Time}, de forma que está dado en segundos por lo que esto nos da un tiempo que no se corresponde con la realidad.
 
 \subsection{Respuesta protocolo ARP}
 
