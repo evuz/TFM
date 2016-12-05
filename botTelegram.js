@@ -10,7 +10,7 @@ var config = require("./app/config");
 var pass = require("./app/password");
 var alarm = require("./app/alarm");
 var weather = require("./app/weather");
-var domotic = require("./app/domotic");
+// var domotic = require("./app/domotic");
 
 var csv = require("./helpers/csv");
 var date = require("./helpers/date");
@@ -47,15 +47,22 @@ var botTelegram = {
         });
 
         bot.on('voice', function (msg) {
+            var tStart = Date.now();
             var link = bot.downloadFile(msg.voice.file_id, './files');
             link.then(function (value) {
+                var tDownload = Date.now();
                 var exec = require('child_process').exec;
                 exec('opusdec ' + value + ' ./files/file.wav', function (error, stdout) {
-                    console.log(stdout);
+                    // console.log(stdout);
+                    var tDec = Date.now();
                     fs.unlink(value);
                     if (error) throw error;
                     exec('play ./files/file.wav', function (error, stdout, stderr) {
-                        console.log(stdout);
+                        var tEnd = Date.now();
+                        console.log('Descarga: ' + (tDownload - tStart) +
+                            '\nDec: ' + (tDec - tDownload) +
+                            '\nTotal: ' + (tDec - tStart)
+                        );
                         if (error) throw error;
                     });
                 });
@@ -77,6 +84,16 @@ var botTelegram = {
             var username = msg.from.username;
             var strArray = msg.text.split(" ");
             var isAction = strArray[0].substring(0, 1) == '/';
+
+            /**
+             * Tiempos de envío
+             */
+            var tEnd = Date.now();
+            var tStart = msg.date;
+
+            var dif = tEnd - tStart*1000;
+
+            console.log(dif);
 
             if(!config.initConfig) {
                 var key = pass.generatePass();
@@ -293,7 +310,7 @@ var botTelegram = {
                                     user.editUser(username, {id: fromId, name: name});
                                     bot.sendMessage(fromId, "Si estás conectado a la red de la central domótica " +
                                         // TODO: enviar IP de forma automática
-                                        "acceda a este enlace: " + ip + "1200" +
+                                        "acceda a este enlace: " + ip + ":1200" +
                                         "\n Si no estás en tu red, introduce 'fin'");
                                     server.setCatchIP(1, {username:username, id:fromId});
                                     user.setCurrentState(username, 4, user.getAction('start'));
