@@ -27,14 +27,12 @@
 \newcommand\MYhyperrefoptions{bookmarks=true,bookmarksnumbered=true,
 pdfpagemode={UseOutlines},plainpages=false,pdfpagelabels=true,
 colorlinks=true,linkcolor={black},citecolor={black},urlcolor={black},
-pdftitle={Bare Demo of IEEEtran.cls for Computer Society Journals},%<!CHANGE!
+pdftitle={Sistema domótico IoT basado en Raspberry Pi y control remoto por Telegram},%<!CHANGE!
 pdfsubject={Typesetting},%<!CHANGE!
-pdfauthor={Michael D. Shell},%<!CHANGE!
-pdfkeywords={Computer Society, IEEEtran, journal, LaTeX, paper,
-             template}}%<^!CHANGE!
+pdfauthor={Jesús Gómez},%<!CHANGE!
+pdfkeywords={Domótica, IoT, Telegram, API, JavaScript, NodeJS, ARP.}}%<^!CHANGE!
 
 \hyphenation{op-tical net-works semi-conduc-tor}
-
 
 \begin{document}
 
@@ -53,7 +51,7 @@ The abstract goes here.
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-Computer Society, IEEE, IEEEtran, journal, \LaTeX, paper, template.
+Domótica, IoT, Telegram, API, JavaScript, NodeJS, ARP.
 \end{IEEEkeywords}}
 
 
@@ -84,26 +82,25 @@ Computer Society, IEEE, IEEEtran, journal, \LaTeX, paper, template.
 
 \section{Introduccion y objetivos}\label{sec:introduccion}
 
-\IEEEPARstart En este Trabajo fin de Máster (TFM) vamos a tratar de ver el impacto 
-que pueden generar las nuevas tecnologías que se están empezando a expandir.
-Estas nuevas tecnologías tienen siempre en mente una perspectiva, el llamado
- "Internet of Things" (IoT) o Internet de las Cosas. 
+\IEEEPARstart En este Trabajo fin de Máster (TFM) se tratará de mostrar el impacto 
+que pueden generar las nuevas tecnologías que están comenzando a expandirse.
+Estas nuevas tecnologías tienen en mente una perspectiva, el llamado
+"Internet of Things" (IoT) o en español, el Internet de las Cosas. 
 Este es un término se refiere a la interconexión de dispositivos físicos, vehículos, edificios 
 y otros objectos --embebidos con electrónica, software, sensores, actuadores y conexión a 
 internet que permiten la recolección de datos.
-Todo esto nos permite que los ordenadores interactúen con elementos de la vida real y ganen 
+Todo esto permite que los ordenadores interactúen con elementos de la vida real y ganen 
 independencia de los seres humanos.
 
 Bien es cierto, que el IoT va a suponer un gran impacto en cuanto a la industria y la investigación,
- pero no será menos para los ambientes domésticos ya que nos permite automatizar muchas funciones 
- de nuestros hogares.
+pero no será menos para los ambientes domésticos ya que nos permite automatizar muchas funciones 
+de nuestros hogares.
 En este entorno tiene gran parte de importancia el uso de los \textit{smartphones}, pues son en 
 muchos casos los encargados de comunicar a los seres humanos con nuestros dispositivos.
 
 Otro de los dispositivos en auge y que han fomentado la automatización en los hogares son los 
 micro-ordenadores, como son las Raspberry Pi, estos son dispositivos tremendamente versátiles 
 y cada vez más potentes.
-
 
 \subsection{Objetivos}
 En el actual TFM, vamos buscar unos objetivos basándonos en IoT en un entorno doméstico.
@@ -116,7 +113,7 @@ Python, el cuál es el lenguaje de programación más extendido para la Raspberr
 
 El sistema domótico, realizará el control sobre persianas/toldos, basándose en las previsiones 
 de servicios meteorológicos, prevaleciendo las acciones del usuario. El usuario también tendrá 
-control sobre puertas, luces, el sistema de climatización y la alarma.
+control sobre puertas, luces y la alarma.
 
 Por otro lado también se tendrá un control de presencia dentro de la casa, registrando las 
 entradas y salidas de los usuarios mediante la MAC de su smartphone y el protocolo ARP. 
@@ -135,55 +132,57 @@ posibilidades se nos abren con estos tres elementos.
 \end{figure}
 
 En la figura \ref{fig:arqSist} se muestra la arquitectura del sistema que se va a desarrollar. 
-Como vemos, el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la 
-Raspberry Pi y el usuario en la misma red, la comunicación se estable con el servidor de telegram 
+Se puede ver como el usuario no tiene contacto directo con el sistema. Pues aunque se encuentre la 
+Raspberry Pi y el usuario en la misma red, la comunicación se establece con el servidor de telegram 
 de por medio.
 
 Una vez que el usuario envía un comando y el bot lo recibe, éste provoca un evento y envía 
 la orden hacia la lógica de control. La cual actuará en consecuencia de su alrededor.
 
-De igual forma que nosotros enviamos comandos al sistema, el sistema nos devolverá los diferentes 
+De igual forma que el usuario envía comandos al sistema, el sistema enviará al usuario los diferentes 
 datos que recoge por los sensores y servicios que se estén manejando en ese momento.
 
-El componente principal del sistema será la Raspberry Pi, en concreto usaremos 
-la versión 3. Se puede definir la Raspberry Pi como un ordenador de placa 
-reducida. En su interior cuenta con un procesador ARM de 64bits con 4 núcleos a 
+El componente principal del sistema será una Raspberry Pi, en concreto usaremos 
+la versión 3. La Raspberry Pi se puede definir como un ordenador de placa 
+reducida. Esta en su interior cuenta con un procesador ARM de 64bits con 4 núcleos a 
 1,2GHz. Cuenta con 1GB de RAM, conectividad Wi-Fi y bluetooth.
 
 Se puede decir que los demás componentes del sistema son genéricos, por lo que 
 no dependemos de ningún componente concreto.
 
 \section{Desarrollo Software}
-Para el desarrollo del software, se va a utilizar NodeJS, para la comunicación con telegram se va a 
-usar un módulo para interactuar con el API oficial de telegram. Este módulo nos proporciona los 
-métodos y eventos principales a la hora de comunicarnos con el bot.
+Para el desarrollo del software se va a utilizar NodeJS. La comunicación con telegram se llevará 
+a cabo mediante uno de los muchos módulos que se pueden encontrarar para este lenguaje.
+En concreto, este módulo se utilizará para interactuar con el Bot API oficial de Telegram. 
+Este módulo nos proporciona los métodos y eventos principales a la hora de comunicarnos con el bot.
 
-En base a los comandos que el usuario env, se va a desarrollar una máquina de estados que nos 
+En base a los comandos que el usuario envía, se va a desarrollar una máquina de estados que nos 
 permitirá interactuar con nuestro sistema.
 
 Las características que se van a incluir en nuestro sistema domótico son las siguientes:
 \begin{itemize}
-\item Control de usuarios: el acceso a los comandos de nuestro sistema queda restringido a 
+\item \textbf{Control de usuarios:} el acceso a los comandos de nuestro sistema queda restringido a 
 usuarios autorizados. Se gestionarán dos tipos de permisos, administradores y usuarios.
-\item Control de presencia: el sistema domótico mediante el protocolo ARP, puede saber los 
+\item \textbf{Control de presencia:} el sistema domótico mediante el protocolo ARP, puede saber los 
 dispositivos que se encuentran en ese momento en la red. Teniendo en cuenta que según datos 
 estadísticos el 51\% de la población mundial tiene un smartphone. Podemos tener constancia de 
 quien se encuentra en casa y guardar un registro de entrada y salida.
-\item Control remoto del portero automático: se dispondrá de una cámara en nuestra puerta la cual 
-nos enviará una foto de quien se encuentra en ella cuando llamen al timbre. Pudiendo también enviar 
-un mensaje de voz mediante Telegram y que este sea reproducido.
-\item Control de temperatura: mediante el servicio online \textit{openweathermap}, obtendremos la 
+\item \textbf{Control remoto del portero automático:} se dispondrá de una cámara en nuestra puerta la cual 
+enviará una foto de quien se encuentra en ella cuando llamen al timbre. Pudiendo también 
+el usuario enviar un mensaje de voz mediante Telegram y que este sea reproducido 
+por el portero automático.
+\item \textbf{Control de temperatura:} mediante el servicio online \textit{openweathermap}, obtendremos la 
 temperatura en nuestra localización
-\item Control de alarma: se desarrollará un sistema de alarma por control remoto, asistido en 
+\item \textbf{Control de alarma:} se desarrollará un sistema de alarma por control remoto, asistido en 
 gran parte por nuestro sistema de control de presencia.
-\item Control de sensores y actuadores: con los 18 GPIO de la Raspberry Pi se pueden combinar 
+\item \textbf{Control de sensores y actuadores:} con los 18 GPIO de la Raspberry Pi se pueden combinar 
 diferentes sensores y actuadores.
 \end{itemize}
 
 \subsection{API de Telegram}
 Telegram ofrece dos tipos de API. La \textit{Telegram API}, que permite crear tu propio cliente 
 telegram y la \textit{API Bot}, que permite crear programas dentro de la interfaz de un 
-cliente de telegram. En el caso que a nosotros nos corresponde nos vamos a 
+cliente de telegram. Para el caso que a nosotros nos corresponde nos vamos a 
 centrar en la \textit{API Bot}. 
 
 Estos bots son aplicaciones de terceros que corren dentro de un cliente de 
@@ -229,10 +228,10 @@ del usuario al bot y el envío de mensajes desde el bot al usuario.
 
 \subsubsection{Mensajes del usuario al bot}
 Este tipo de mensajes que nosotros vamos a recibir en nuestra aplicación, son 
-representados por un objeto JSON. Este objeto tiene 2 campos principales, cada uno representado por
+representados por un objeto JSON. Este objeto tiene 3 campos principales, cada uno representado por
 un nuevo objeto JSON:
 \begin{itemize}
-  \item User. Este objeto contiene los datos del usuario envía el mensaje.
+  \item User. Este objeto contiene los datos del usuario que envía el mensaje.
  Podemos ver los campos más relevantes en la tabla \ref{tab:User}
   
   \begin{table}[h]
@@ -263,7 +262,7 @@ un nuevo objeto JSON:
   \end{table}
   
   \item Message. En este objeto encontramos todos los campos referentes al 
-  mensaje. Podemos ver los campos más relevantes en la tabla \ref{tab:Message}
+  mensaje. Podemos ver los campos más interesantes en la tabla \ref{tab:Message}
   
    \begin{table}[h]
   \centering
@@ -329,8 +328,8 @@ Este tratamiento lo veremos con más detalle en la subsección \ref{sec:ControlU
 A continuación, vamos a ver como se gestionan los diferentes usuarios del sistema y cuales 
 son las posibilidades que tiene cada tipo de usuario.
 
-Cada usuario en telegram se identifica por un ID único que se asigna automáticamente en 
-el momento del registro en la aplicación y además por un alias, también único, el cual se asigna el 
+Cada usuario en telegram se identifica por un ID único, que se asigna automáticamente en 
+el momento del registro en la aplicación, y por un alias, también único, el cual se asigna el 
 propio usuario. Nuestro API puede usar los dos identificadores para enviar los  mensajes, sin embargo, 
 hemos optado por realizar el envío de de los mensajes siempre a través del ID, pues de esta forma 
 tenemos la certeza de que nunca va a fallar el envío del mensaje. 
@@ -394,7 +393,7 @@ mensaje con la key, podemos ver el proceso en la figura \ref{fig:imgPass}
 \subsection{Control de presencia}
 Para la detección de presencia nos hemos basado en el protocolo ARP. Sabiendo la 
 ínfima posibilidad que hay de coincidir dos MAC en un misma red, cada usuario 
-será identificado en por el sistema con la MAC de su smartphone. De esta forma, 
+será identificado por el sistema con la MAC de su smartphone. De esta forma, 
 cada vez que tengamos una conexión o desconexión en nuestra red se detectará el 
 dispositivo y se asociará con un usuario.
 
@@ -409,9 +408,10 @@ aplicación de mensajería, por lo tanto aunque nos encontremos en la misma red
 que el sistema no se podrá obtener la IP enviando un mensaje, pues la 
 identificación que se utiliza en la aplicación de mensajería es diferente.
 
-Una vez que eser tenga la IP del usuario, en el siguiente reconocimeinto que se 
+Una vez que se tenga la IP del usuario, en el siguiente reconocimeinto que se 
 haga de la red se identificará la MAC del usuario y se le asignará en su 
-correspondiente entrada, como se vio en la subsección \ref{sec:ControlUsuarios}
+correspondiente entrada, como se vio en la subsección \ref{sec:ControlUsuarios}. 
+Se puede ver un diagrama de este proceso en la figura \ref{fig:ActMAC}
 
 \begin{figure}[h]
 \centering
@@ -421,29 +421,28 @@ correspondiente entrada, como se vio en la subsección \ref{sec:ControlUsuarios}
 \end{figure}
 
 \subsection{Control remoto del portero automático}
-Mediante los mensajes de voz integrados en Telegram, un altavoz y una cámara se  
+Mediante los mensajes de voz integrados en Telegram, un altavoz y una cámara, se  
 ha desarrollado este sistema para el control remoto del portero automático. 
 
-Este control se activará cuando alguien llame al timbre, uno de los GPIO de la 
-raspberry emitirá el evento que iniciará una captura de la cámara. Esta 
+Este control se activará cuando alguien llame al timbre. Uno de los GPIO de la 
+Raspberry Pi emitirá el evento que iniciará una captura de la cámara. Esta 
 captura se enviará a cada usuario del sistema. 
 Para poder responderle a quien llama, el usuario del sistema puede enviar un mensaje de voz mediante
-telegram, este mensaje de voz se reproducirá por un altavoz instalado en el sistema.
+telegram, este mensaje de voz se reproducirá por un altavoz colocado en el portero automático.
 
 Cuando un usuario de Telegram envía un mensaje de voz mediante la aplicación, 
-este mensaje se almacena en su servidor, por lo que cuando recibamos el mensaje 
+este mensaje se almacena en el servidor de Telegram, por lo que cuando recibamos el mensaje 
 de voz en nuestra aplicación la información que obtendremos será el ID del 
 fichero en el servidor. Por lo que una vez recibido este ID, tendremos que 
-descargar el audio, mediante el método \textit{downloadFile} del API de 
-Telegram.
+descargar el audio, mediante el método \textit{downloadFile}.
 El fichero descargado se encuentra en formato \textit{ogg} usando el codec 
 \textit{opus}, este fichero no se puede reproducir directamente desde la 
-terminal de linux. Por lo tanto, este fichero se convierte a formato un formato común como es 
-el \textit{wav}, que será el que podamos reproducir.
+terminal de linux. Por lo tanto, se tiene que convertir a un formato común como es 
+el \textit{wav}, que sí se puede reproducir mediante el comando \textit{play} del paquete \textit{sox}.
 
 \subsection{Control de sensores y actuadores}
-Para el control de los sensores y los actuadores se van a usar log GPIOs de la 
-Raspberry Pi, aunque tambien es posible encontrarlos controlados por USB.
+Para el control de los sensores y los actuadores se van a usar los GPIOs de la 
+Raspberry Pi, aunque tambien es posible encontrarl elementos controlados por USB.
 
 Para el control de los GPIOs se usará el módulo de NodeJS llamado 
 \textit{rpi-gpio}, con este módulo tenemos preparado los métodos para configurar 
@@ -455,12 +454,12 @@ dejarán preparadas las funciones para trabajar con los siguientes elementos,
 aunque se podrían añadir más:
 
 \begin{itemize}
-  \item Luces: un funcionamiento sencillo como es el apagar y encender luces, a 
+  \item \textbf{Luces:} un funcionamiento sencillo como es el apagar y encender luces, a 
   petición del usuario el pin configurado para esta función se pondrá al valor 
   pedido.
-  \item Climatización: al igual que con las luces, se puede preparar la 
+  \item \textbf{Climatización:} al igual que con las luces, se puede preparar la 
   climatización para ser encendida y apagada.
-  \item Toldos y persianas: este control se podría simular con motores DC, estos 
+  \item \textbf{Toldos y persianas:} este control se puede simular con motores DC, estos 
   motores regulan su velocidad mediante PWM y se controla la posición inicial y 
   final mediante finales de carrera. 
   Por consiguiente, midiendo el tiempo entre la 
@@ -478,8 +477,8 @@ temperatura del momento.
 
 Nuestro sistema necesita tener las coordenadas de su ubicación, así que cuando 
 se realice la configuración inicial del bot nos pedirá que enviemos la ubicación 
-en la que se encuentra. Esto se realizará mediante las opciones de telegram, el 
-sistema recibirá la ubicación y almacenará las coordenadas de estas.
+en la que se encuentra. Esto se realiza mediante las opciones de telegram, el 
+sistema recibe la ubicación y almacenará las sus coordenadas.
 
 \subsection{Control de alarma}
 La alarma contará con sensores de apertura de puertas y ventanas para la 
@@ -504,7 +503,7 @@ Se ha optado por almacenar los datos persistentes en archivos CSV, de esta forma
 tenemos implementado un módulo de lectura y escritura de este tipo de archivos para 
 en un futuro poder usar el envío de ficheros CSV para configurar el sistema, añadir usuarios, etc.
 
-\section{Pruebas de Rendimiento}
+\section{Pruebas de Rendimiento}\label{sec:pruebasRendimiento}
 Se han realizado pruebas de rendimiento en los siguientes componentes del sistema:
 \begin{itemize}
   \item Respuesta al protocolo ARP
@@ -516,21 +515,99 @@ Se han realizado pruebas de rendimiento en los siguientes componentes del sistem
 Estas pruebas de rendimientos se van a realizar sobre diferentes 
 plataformas como son:
 \begin{itemize}
-\item Raspberry Pi B+
 \item Raspberry Pi 3
 \item SSOO Debian virtualizado sobre MacBook Pro
 \end{itemize}
 
-Se ha intentado medir el tiempo de respuesta de la petición, pero el dato que recibimos en el mensaje de telegram se da en formato \textit{Unix Time}, de forma que está dado en segundos por lo que esto nos da un tiempo que no se corresponde con la realidad.
+Se ha intentado medir el tiempo de respuesta de la petición, 
+pero el dato que recibimos en el mensaje de telegram se da en 
+formato \textit{Unix Time}, de forma que está dado en segundos 
+por lo que esto nos da un tiempo que no se corresponde con la realidad.
 
 \subsection{Respuesta protocolo ARP}
+Los tiempos que se han medido podemos verlos en la tabla \ref{tab:tiemposARP}:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc}
+ Dispositivo & Tiempo \\ \hline
+Raspberry Pi & 13380ms \\
+MacBook & 11778ms
+\end{tabular} 
+\caption{Tiempos ARP}
+\label{tab:tiemposARP}
+\end{table}
+
+Se pueden aprecidar que son tiempos altos, pero no es una detección que se 
+necesite con gran precisión. Por lo que son tiempos asumibles.
 
 \subsection{Captura de foto}
 
+Estos tiempos son tomados desde que se realiza la foto hasta que ésta se 
+almacena en nuestro disco duro. Pues es necesario este almacenamiento para poder 
+enviarla mediante el módulo que estamos usando para comunicarnos con el API de 
+Telegram.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+Dispositivo & v4l2camera & fswebcam \\ \hline
+Raspberry Pi & 1246ms &  1278ms\\
+MacBook &  1038ms & 986ms
+\end{tabular} 
+\caption{Tiempos captura de foto}
+\label{tab:tiemposFoto}
+\end{table}
+
+Se han medido la velocidad de dos módulos diferentes para ver cual elegir y 
+podemos apreciar que nos hay diferencia entre ellos. Por lo que nos quedamos con 
+el módulo v4l2camera que es más flexible con respecto a la programación.
+
+Por otro lado, se ven que son tiempos relativamente altos, pero estos tiempos 
+tienen también como factor determinante la velocidad de captura de la cámara, 
+que en este caso sólo se ha hecho pruebas con un modelo.
+
 \subsection{Proceso de recepción y reproducción de audio}
+
+En esta medida pasamos por alto el tiempo de subida del audio, puesto que es un 
+factor que depende de muchos factores. El fichero de audio que se utiliza es de 
+aproximadamente dos segundos.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc}
+Dispositivo & Descarga & Decode & Total \\ \hline
+Raspberry Pi & 609ms &  1278ms\\
+MacBook &  524ms & 986ms
+\end{tabular} 
+\caption{Tiempos mensajes de voz}
+\label{tab:tiemposVoz}
+\end{table}
 
 \subsection{Petición y tratamiento de datos meteorológicos}
 
+La comparación entre los tiempos de petición de los datos meteorológicos podemos 
+verlos en la tabla \ref{tab:tiemposMet}
+
+Como conclusión podemos destacar que hay una diferencia sustancial entre ambas 
+máquinas, pero es algo totalmente obvio viendo las grandes diferencias de cada 
+máquina. Pero de igual forma, vemos que son tiempos totalmentes asumibles para 
+nuestro desarrollo.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc}
+Dispositivo & Tiempo\\ \hline
+Raspberry Pi & 330ms\\
+MacBook &  280ms
+\end{tabular} 
+\caption{Tiempos datos meteorológicos}
+\label{tab:tiemposMet}
+\end{table}
+
+En relación a las pruebas en la que necesitamos conexión a internet, 
+hay que mencionar que el MacBook se encuentra conectado a una red Inalámbrica, 
+mientras que la Rasberry Pi se encuentra conectado al router mediante cable Ethernet. 
 
 \section{Costes}
 El tiempo desarrollo de este sistema domótico ha sido de 300 horas, tomando un 
@@ -568,21 +645,55 @@ ha cumplido perfectamente con lo que esperabamos de él. La gran cantidad de
 módulos que se pueden encontrar desarrollados por la comunidad han facilitado el 
 trabajo enormemente.
 
-El último objetivo que nos planteamos fue que el sistema se controlara mediante 
+El control de presencia que se planteó se ha podido implementar en el sistema, 
+aunque hemos visto en la sección \ref{sec:pruebasRendimiento} que lleva un 
+tiempo bastante alto el reconocimiento de toda la red. Pero al no requerir que 
+este sistema lleve un control exhaustivo podemos permitirnos estos tiempos.
+
+El último objetivo que se planteó fue que el sistema se controlara mediante 
 una aplicación de mensajería. Se ha elegido Telegram, la cual hemos visto el API 
 que ofrece para crear aplicaciones dentro de su cliente. Este API en conjunto 
 con uno de los módulos de NodeJS nos ha permitido desarrollar nuestra aplicación 
 sin dificultad pudiendo ofrecer todas las opciones que se deseaban.
 
-\hfill mds
- 
-\hfill August 26, 2015
-
 \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to {\LaTeX}}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{bib:Raspberry}
+Download Raspbian for Raspberry Pi [online] \\
+Available at: https://www.raspberrypi.org/downloads/raspbian/
+
+\bibitem{bib:telegramAPI}
+Telegram APIs. [online]  \\
+Available at: https://core.telegram.org/api
+
+\bibitem{bib:telegramAPIBot}
+Telegram Bot API [online] \\ 
+Available at: https://core.telegram.org/bots/api
+
+\bibitem{bib:ARP}
+RFC 826 - Ethernet Address Resolution Protocol: Or Converting Network Protocol 
+Addresses to 48.bit Ethernet Address for Transmission on Ethernet Hardware. [online] \\
+Available at: https://tools.ietf.org/html/rfc826 [Accessed 6 Dec. 2016].
+
+\bibitem{bib:openweather}
+Current weather and forecast. OpenWeatherMap \\
+Available at: http://openweathermap.org
+
+\bibitem{bib:nodeTelegramAPIBot}
+Node Telegram Bot API. [online] \\
+Available at: https://github.com/yagop/node-telegram-bot-api
+
+\bibitem{bib:nodeGPIO}
+Control Raspberry Pi GPIO pins with node.js [online] \\
+Available at: https://www.npmjs.com/package/rpi-gpio
+
+\bibitem{bib:nodeCam}
+Capturing images from USB(UVC) webcam on linux machines [online] \\
+Available at: https://www.npmjs.com/package/v4l2camera
+
+\bibitem{bib:nodeWeather}
+Get weather from OpenWeatherMap [online]
+Available at: https://www.npmjs.com/package/openweather-node
 
 \end{thebibliography}
 \end{document}

@@ -7,9 +7,10 @@ RPI,13380,,
 Mac,11778,,
 ,,,
 Voz,Total,Desc,Dec
-RPI,1193,1085,109
-Mac,974,963,11
-,,,
+Casa,RPI,1193,1085,109
+Casa,Mac,974,963,11
+Elelog,RPI,,609,
+Elelog,Mac,,524,
 Tiempo,,,
 RPI,,,
 Mac,,,
